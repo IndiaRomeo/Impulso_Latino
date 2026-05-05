@@ -11,13 +11,13 @@ const PIPELINE_STAGES = [
   { id: 'desembolsado', label: 'Desembolsado' },
 ]
 
-const RATES = { 12: 0.04, 24: 0.05, 36: 0.06 }
-const AMOUNT_MID = { '$500 – $1,000': 750, '$1,000 – $2,000': 1500, '$2,000 – $5,000': 3500, 'Más de $5,000': 7000 }
+const PRESET_RATES = { 12: 4, 24: 5, 36: 6 }  // percent
+const AMOUNT_MID   = { '$500 – $1,000': 750, '$1,000 – $2,000': 1500, '$2,000 – $5,000': 3500, 'Más de $5,000': 7000 }
 
 const DISBURSEMENT_STATUS = {
-  '':          { label: 'Sin estado',          color: 'bg-gray-100 text-gray-600',   icon: AlertCircle },
-  'exitoso':   { label: 'Desembolso Exitoso',  color: 'bg-green-100 text-green-700', icon: CheckCircle },
-  'incorrecto':{ label: 'Desembolso Incorrecto', color: 'bg-red-100 text-red-700',  icon: XCircle },
+  '':           { label: 'Sin estado',            color: 'bg-gray-100 text-gray-600',   Icon: AlertCircle },
+  'exitoso':    { label: 'Desembolso Exitoso',    color: 'bg-green-100 text-green-700', Icon: CheckCircle },
+  'incorrecto': { label: 'Desembolso Incorrecto', color: 'bg-red-100 text-red-700',     Icon: XCircle     },
 }
 
 function InfoRow({ icon: Icon, label, value }) {
@@ -40,74 +40,103 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
     estado_civil_admin:     lead.estado_civil_admin || '',
     notas:                  lead.notas || '',
   })
-  const [stage, setStage] = useState(lead.stage || 'nuevo')
-  const [calcTerm, setCalcTerm] = useState(12)
-  const [calcAmount, setCalcAmount] = useState(AMOUNT_MID[lead.monto_necesario] || 3500)
-  const [creatingLoan, setCreatingLoan] = useState(false)
-  const [loanMessage, setLoanMessage] = useState('')
-  const [existingLoan, setExistingLoan] = useState(null)
+  const [stage, setStage]                 = useState(lead.stage || 'nuevo')
+  const [calcAmount, setCalcAmount]       = useState(AMOUNT_MID[lead.monto_necesario] || 3500)
+  const [calcTerm, setCalcTerm]           = useState(12)
+  const [calcRate, setCalcRate]           = useState(4)   // percentage
+  const [saving, setSaving]               = useState(false)
+  const [creatingLoan, setCreatingLoan]   = useState(false)
+  const [loanMessage, setLoanMessage]     = useState('')
+  const [existingLoan, setExistingLoan]   = useState(null)
+  const [loanInitialized, setLoanInit]    = useState(false)
   const [desembolsoEstado, setDesembolsoEstado] = useState(lead.desembolso_estado || '')
   const [settingStatus, setSettingStatus] = useState(false)
-  const [showContract, setShowContract] = useState(false)
+  const [showContract, setShowContract]   = useState(false)
 
-  const rate    = RATES[calcTerm]
-  const monthly = ((calcAmount * (1 + rate)) / calcTerm).toFixed(2)
-  const total   = (calcAmount * (1 + rate)).toFixed(2)
+  const rateDecimal = calcRate / 100
+  const monthly = calcTerm > 0 ? ((calcAmount * (1 + rateDecimal)) / calcTerm).toFixed(2) : '0.00'
+  const total   = (calcAmount * (1 + rateDecimal)).toFixed(2)
 
   const waMsg = encodeURIComponent(`Hola ${lead.nombre}, soy asesor de Impulso Latino. Quería dar seguimiento a tu solicitud de ${lead.monto_necesario}. ¿Tienes un momento?`)
 
-  useEffect(() => {
-    fetchExistingLoan()
-  }, [])
+  useEffect(() => { fetchExistingLoan() }, [])
 
   async function fetchExistingLoan() {
     const { data } = await supabase.from('loans').select('*').eq('lead_id', lead.id).maybeSingle()
-    if (data) setExistingLoan(data)
+    if (data) {
+      setExistingLoan(data)
+      if (!loanInitialized) {
+        setCalcAmount(Number(data.monto) || AMOUNT_MID[lead.monto_necesario] || 3500)
+        setCalcTerm(data.plazo_meses || 12)
+        setCalcRate(Number((data.tasa_interes * 100).toFixed(2)) || 4)
+        setLoanInit(true)
+      }
+    }
   }
 
-  const save = () => {
+  function applyPreset(term) {
+    setCalcTerm(term)
+    setCalcRate(PRESET_RATES[term] ?? 4)
+  }
+
+  async function save() {
+    setSaving(true)
     onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado })
+
+    if (existingLoan) {
+      const newTotal   = calcAmount * (1 + rateDecimal)
+      const newMonthly = calcTerm > 0 ? newTotal / calcTerm : 0
+      await supabase.from('loans').update({
+        monto:           Number(Number(calcAmount).toFixed(2)),
+        plazo_meses:     calcTerm,
+        tasa_interes:    rateDecimal,
+        cuota_mensual:   Number(newMonthly.toFixed(2)),
+        total_pagar:     Number(newTotal.toFixed(2)),
+        saldo_pendiente: Number(newTotal.toFixed(2)),
+      }).eq('id', existingLoan.id)
+    }
+
+    setSaving(false)
     onClose()
   }
 
   async function createLoan() {
     setLoanMessage('')
-    if (!lead.user_id) {
-      setLoanMessage('Este lead no tiene usuario vinculado. No se puede crear el prestamo del cliente.')
-      return
-    }
+    if (!lead.user_id) { setLoanMessage('Este lead no tiene usuario vinculado.'); return }
     setCreatingLoan(true)
     const start = new Date()
     const due   = new Date(start)
     due.setMonth(due.getMonth() + calcTerm)
 
-    const { data: existing, error: existingErr } = await supabase
-      .from('loans').select('id').eq('lead_id', lead.id).maybeSingle()
-    if (existingErr) { setCreatingLoan(false); setLoanMessage(existingErr.message || 'No se pudo verificar si ya existe un prestamo.'); return }
-    if (existing)    { setCreatingLoan(false); setLoanMessage('Este lead ya tiene un prestamo creado.'); return }
+    const { data: existing } = await supabase.from('loans').select('id').eq('lead_id', lead.id).maybeSingle()
+    if (existing) { setCreatingLoan(false); setLoanMessage('Este lead ya tiene un prestamo creado.'); return }
+
+    const newTotal   = calcAmount * (1 + rateDecimal)
+    const newMonthly = calcTerm > 0 ? newTotal / calcTerm : 0
 
     const { data: newLoan, error: loanErr } = await supabase.from('loans').insert({
-      user_id:          lead.user_id,
-      lead_id:          lead.id,
-      numero_prestamo:  `IL-${Date.now().toString().slice(-8)}`,
-      monto:            Number(Number(calcAmount).toFixed(2)),
-      plazo_meses:      calcTerm,
-      tasa_interes:     rate,
-      cuota_mensual:    Number(monthly),
-      total_pagar:      Number(total),
-      saldo_pendiente:  Number(total),
-      estado:           'activo',
-      fecha_inicio:     start.toISOString().slice(0, 10),
+      user_id:           lead.user_id,
+      lead_id:           lead.id,
+      numero_prestamo:   `IL-${Date.now().toString().slice(-8)}`,
+      monto:             Number(Number(calcAmount).toFixed(2)),
+      plazo_meses:       calcTerm,
+      tasa_interes:      rateDecimal,
+      cuota_mensual:     Number(newMonthly.toFixed(2)),
+      total_pagar:       Number(newTotal.toFixed(2)),
+      saldo_pendiente:   Number(newTotal.toFixed(2)),
+      estado:            'activo',
+      fecha_inicio:      start.toISOString().slice(0, 10),
       fecha_vencimiento: due.toISOString().slice(0, 10),
     }).select().single()
 
     if (loanErr) { setCreatingLoan(false); setLoanMessage(loanErr.message || 'No se pudo crear el prestamo.'); return }
 
     setExistingLoan(newLoan)
+    setLoanInit(true)
     await onUpdate({ ...lead, ...extra, stage: 'desembolsado', desembolso_estado: desembolsoEstado })
     setStage('desembolsado')
     setCreatingLoan(false)
-    setLoanMessage('Prestamo creado correctamente. El cliente lo vera al refrescar su cuenta.')
+    setLoanMessage('Prestamo creado correctamente.')
   }
 
   async function setDisbursementStatus(status) {
@@ -121,11 +150,13 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
   }
 
   const disbStatus = DISBURSEMENT_STATUS[desembolsoEstado] || DISBURSEMENT_STATUS['']
+  const DisbIcon   = disbStatus.Icon
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-end animate-fade-up" onClick={onClose}>
-        <div className="bg-white w-full md:max-w-2xl h-full overflow-y-auto shadow-2xl animate-slide-right" onClick={e => e.stopPropagation()}>
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-end" onClick={onClose}>
+        <div className="bg-white w-full md:max-w-2xl h-full overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+
           {/* Header */}
           <div className="bg-primary px-6 py-4 flex items-center justify-between sticky top-0 z-10">
             <div>
@@ -136,7 +167,7 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
                 <span className="text-xs text-blue-200">{lead.email}</span>
               </div>
             </div>
-            <button onClick={onClose} className="text-white hover:text-blue-200 transition-colors"><X size={22}/></button>
+            <button onClick={onClose} className="text-white hover:text-blue-200"><X size={22}/></button>
           </div>
 
           <div className="p-4 sm:p-6 space-y-6">
@@ -181,35 +212,53 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
               )}
             </div>
 
-            {/* Rate calculator — manual amount */}
+            {/* Calculator — manual amount + term + rate */}
             <div>
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2"><Calculator size={13}/>Calculadora de Tasas</h3>
-              <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
-                <div className="mb-3">
+              {existingLoan && <p className="text-xs text-blue-600 mb-3 bg-blue-50 rounded-lg px-3 py-2">Editando préstamo activo · Al guardar cambios se actualizará para el cliente.</p>}
+              <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-3">
+                {/* Amount */}
+                <div>
                   <label className="text-xs text-gray-500 font-semibold mb-1 block">Monto a otorgar (USD)</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
-                    <input
-                      type="number"
-                      min="100"
-                      max="100000"
-                      step="50"
-                      value={calcAmount}
+                    <input type="number" min="100" step="50" value={calcAmount}
                       onChange={e => setCalcAmount(Number(e.target.value) || 0)}
-                      className="w-full pl-7 pr-3 py-2.5 border-2 border-gray-200 rounded-xl text-sm font-bold text-gray-700 focus:outline-none focus:border-secondary bg-white"
-                    />
+                      className="w-full pl-7 pr-3 py-2.5 border-2 border-gray-200 rounded-xl text-sm font-bold text-gray-700 focus:outline-none focus:border-secondary bg-white"/>
                   </div>
                 </div>
-                <div className="flex gap-2 mb-4">
-                  {Object.keys(RATES).map(t => (
-                    <button key={t} onClick={() => setCalcTerm(Number(t))}
-                      className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${calcTerm === Number(t) ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-600'}`}>
-                      {t}m
-                    </button>
-                  ))}
+
+                {/* Term — presets + custom */}
+                <div>
+                  <label className="text-xs text-gray-500 font-semibold mb-1 block">Plazo (meses)</label>
+                  <div className="flex gap-2">
+                    {[12, 24, 36].map(t => (
+                      <button key={t} type="button" onClick={() => applyPreset(t)}
+                        className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex-shrink-0 ${calcTerm === t && calcRate === PRESET_RATES[t] ? 'bg-primary text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-primary'}`}>
+                        {t}m
+                      </button>
+                    ))}
+                    <input type="number" min="1" max="360" value={calcTerm}
+                      onChange={e => setCalcTerm(Number(e.target.value) || 1)}
+                      className="flex-1 min-w-0 border-2 border-gray-200 rounded-xl px-3 py-2 text-sm font-bold text-gray-700 focus:outline-none focus:border-secondary bg-white text-center"
+                      placeholder="Custom"/>
+                  </div>
                 </div>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  {[['Cuota mensual', `$${monthly}`],['Total a pagar', `$${total}`],['Tasa anual', `${rate*100}%`]].map(([l,v]) => (
+
+                {/* Rate */}
+                <div>
+                  <label className="text-xs text-gray-500 font-semibold mb-1 block">Tasa de interés anual (%)</label>
+                  <div className="relative">
+                    <input type="number" min="0" max="100" step="0.1" value={calcRate}
+                      onChange={e => setCalcRate(Number(e.target.value) || 0)}
+                      className="w-full pr-8 pl-3 py-2.5 border-2 border-gray-200 rounded-xl text-sm font-bold text-gray-700 focus:outline-none focus:border-secondary bg-white"/>
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">%</span>
+                  </div>
+                </div>
+
+                {/* Results */}
+                <div className="grid grid-cols-3 gap-2 text-center pt-1">
+                  {[['Cuota mensual', `$${monthly}`], ['Total a pagar', `$${total}`], ['Tasa anual', `${calcRate}%`]].map(([l, v]) => (
                     <div key={l} className="bg-white rounded-lg p-3">
                       <p className="text-xs text-gray-400">{l}</p>
                       <p className="font-black text-primary">{v}</p>
@@ -219,24 +268,17 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
               </div>
             </div>
 
-            {/* Create loan section (desembolsado stage) */}
+            {/* Create loan (only when no loan exists and stage = desembolsado) */}
             {stage === 'desembolsado' && !existingLoan && (
               <div className="bg-green-50 border border-green-200 rounded-xl p-4">
                 <div className="flex flex-col sm:flex-row items-start gap-4">
                   <div className="flex-1">
                     <h3 className="font-bold text-green-800">Crear prestamo activo</h3>
-                    <p className="text-sm text-green-700 mt-1">
-                      Se registrará el préstamo activo en el sistema y se notificará al cliente para que lo vea en su cuenta.
-                    </p>
-                    <p className="text-xs text-green-600 mt-2">
-                      Monto: ${Number(calcAmount).toLocaleString()} · Plazo: {calcTerm} meses · Cuota: ${monthly}
-                    </p>
+                    <p className="text-sm text-green-700 mt-1">Se registrará el préstamo y el cliente lo verá en su cuenta.</p>
+                    <p className="text-xs text-green-600 mt-2">Monto: ${Number(calcAmount).toLocaleString()} · Plazo: {calcTerm}m · Tasa: {calcRate}% · Cuota: ${monthly}</p>
                   </div>
-                  <button
-                    onClick={createLoan}
-                    disabled={creatingLoan}
-                    className="bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-bold px-4 py-2.5 rounded-xl text-sm flex-shrink-0 w-full sm:w-auto"
-                  >
+                  <button onClick={createLoan} disabled={creatingLoan}
+                    className="bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-bold px-4 py-2.5 rounded-xl text-sm flex-shrink-0 w-full sm:w-auto">
                     {creatingLoan ? 'Creando...' : 'Crear prestamo'}
                   </button>
                 </div>
@@ -244,51 +286,32 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
               </div>
             )}
 
-            {/* Disbursement status section — shown when loan exists */}
+            {/* Disbursement status panel — only when loan exists */}
             {existingLoan && (
               <div className="border border-gray-200 rounded-xl overflow-hidden">
                 <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-bold text-gray-600 uppercase tracking-wider">Estado del Desembolso</p>
-                    <p className="text-xs text-gray-400 mt-0.5">Préstamo {existingLoan.numero_prestamo} · ${Number(existingLoan.monto).toLocaleString()}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{existingLoan.numero_prestamo} · ${Number(existingLoan.monto).toLocaleString()}</p>
                   </div>
                   <span className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full ${disbStatus.color}`}>
-                    <disbStatus.icon size={13}/>
-                    {disbStatus.label}
+                    <DisbIcon size={13}/>{disbStatus.label}
                   </span>
                 </div>
-                <div className="p-4">
-                  <p className="text-xs text-gray-500 mb-3">Marca el resultado del desembolso para que el cliente lo vea actualizado:</p>
+                <div className="p-4 space-y-3">
+                  <p className="text-xs text-gray-500">Marca el resultado del desembolso para que el cliente lo vea actualizado:</p>
                   <div className="flex gap-3">
-                    <button
-                      onClick={() => setDisbursementStatus('exitoso')}
-                      disabled={settingStatus || desembolsoEstado === 'exitoso'}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all ${
-                        desembolsoEstado === 'exitoso'
-                          ? 'bg-green-600 text-white'
-                          : 'bg-green-50 hover:bg-green-100 text-green-700 border-2 border-green-200'
-                      } disabled:opacity-50`}
-                    >
+                    <button onClick={() => setDisbursementStatus('exitoso')} disabled={settingStatus || desembolsoEstado === 'exitoso'}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all disabled:opacity-50 ${desembolsoEstado === 'exitoso' ? 'bg-green-600 text-white' : 'bg-green-50 hover:bg-green-100 text-green-700 border-2 border-green-200'}`}>
                       <CheckCircle size={16}/> Exitoso
                     </button>
-                    <button
-                      onClick={() => setDisbursementStatus('incorrecto')}
-                      disabled={settingStatus || desembolsoEstado === 'incorrecto'}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all ${
-                        desembolsoEstado === 'incorrecto'
-                          ? 'bg-red-600 text-white'
-                          : 'bg-red-50 hover:bg-red-100 text-red-700 border-2 border-red-200'
-                      } disabled:opacity-50`}
-                    >
+                    <button onClick={() => setDisbursementStatus('incorrecto')} disabled={settingStatus || desembolsoEstado === 'incorrecto'}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all disabled:opacity-50 ${desembolsoEstado === 'incorrecto' ? 'bg-red-600 text-white' : 'bg-red-50 hover:bg-red-100 text-red-700 border-2 border-red-200'}`}>
                       <XCircle size={16}/> Incorrecto
                     </button>
                   </div>
-
-                  {/* Contract button */}
-                  <button
-                    onClick={() => setShowContract(true)}
-                    className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 border-primary/30 hover:border-primary text-primary font-semibold text-sm rounded-xl transition-all hover:bg-primary/5"
-                  >
+                  <button onClick={() => setShowContract(true)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 border-primary/30 hover:border-primary text-primary font-semibold text-sm rounded-xl transition-all hover:bg-primary/5">
                     <FileText size={15}/> Ver / Generar Contrato
                   </button>
                 </div>
@@ -342,19 +365,16 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
 
             <div className="flex gap-3 pb-4">
               <button onClick={onClose} className="flex-1 py-3 rounded-xl font-bold border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition-all">Cancelar</button>
-              <button onClick={save} className="flex-1 bg-primary hover:bg-blue-900 text-white font-bold py-3 rounded-xl transition-all">Guardar cambios</button>
+              <button onClick={save} disabled={saving} className="flex-1 bg-primary hover:bg-blue-900 disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-all">
+                {saving ? 'Guardando...' : 'Guardar cambios'}
+              </button>
             </div>
           </div>
         </div>
       </div>
 
       {showContract && existingLoan && (
-        <ContractModal
-          clientName={lead.nombre}
-          clientEmail={lead.email}
-          loan={existingLoan}
-          onClose={() => setShowContract(false)}
-        />
+        <ContractModal clientName={lead.nombre} clientEmail={lead.email} loan={existingLoan} onClose={() => setShowContract(false)}/>
       )}
     </>
   )

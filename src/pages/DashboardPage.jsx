@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { LogOut, Plus, Home, User, CreditCard, FileText, ChevronRight, Save, Edit3, X } from 'lucide-react'
+import { LogOut, Plus, Home, User, CreditCard, FileText, ChevronRight, Save, Edit3, X, XCircle, CheckCircle2, AlertCircle } from 'lucide-react'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import Logo from '../components/Logo.jsx'
@@ -217,18 +217,29 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {activeLoan && (
-              <div className="bg-gradient-to-r from-green-600 to-green-500 rounded-2xl p-5 text-white flex items-center justify-between gap-4 animate-fade-up delay-100">
-                <div className="min-w-0">
-                  <p className="font-bold text-base sm:text-lg">Prestamo activo</p>
-                  <p className="text-green-100 text-sm mt-0.5">Saldo: <span className="font-black">${activeLoan.saldo_pendiente?.toLocaleString()}</span></p>
+            {activeLoan && (() => {
+              const ds = latestLead?.desembolso_estado
+              const isError = ds === 'incorrecto'
+              return (
+                <div className={`rounded-2xl p-5 text-white flex items-center justify-between gap-4 animate-fade-up delay-100 bg-gradient-to-r ${isError ? 'from-red-700 to-red-500' : 'from-green-600 to-green-500'}`}>
+                  <div className="min-w-0">
+                    <p className="font-bold text-base sm:text-lg">
+                      {isError ? 'Problema con el desembolso' : 'Prestamo activo'}
+                    </p>
+                    <p className={`text-sm mt-0.5 ${isError ? 'text-red-200' : 'text-green-100'}`}>
+                      {isError ? 'Dinero en espera · Un asesor te contactará pronto' : `Saldo: $${activeLoan.saldo_pendiente?.toLocaleString()}`}
+                    </p>
+                  </div>
+                  {!isError && (
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-green-100 text-xs">Cuota mensual</p>
+                      <p className="font-black text-xl">${activeLoan.cuota_mensual?.toLocaleString()}</p>
+                    </div>
+                  )}
+                  {isError && <XCircle size={32} className="text-red-300 flex-shrink-0"/>}
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="text-green-100 text-xs">Cuota mensual</p>
-                  <p className="font-black text-xl">${activeLoan.cuota_mensual?.toLocaleString()}</p>
-                </div>
-              </div>
-            )}
+              )
+            })()}
 
             <div className="grid grid-cols-3 gap-4 animate-fade-up delay-200">
               {[
@@ -282,6 +293,21 @@ export default function DashboardPage() {
             {activeLoan ? (
               <div className="animate-fade-up delay-200 space-y-3">
                 <h3 className="font-bold text-primary mb-3">Detalles del prestamo activo</h3>
+                {latestLead?.desembolso_estado === 'incorrecto' && (
+                  <div className="flex items-start gap-3 bg-red-50 border border-red-300 rounded-xl p-4">
+                    <XCircle size={20} className="text-red-500 flex-shrink-0 mt-0.5"/>
+                    <div>
+                      <p className="font-bold text-red-800 text-sm">Problema en el desembolso</p>
+                      <p className="text-xs text-red-700 mt-0.5">El dinero está en espera. Tu asesor te contactará para resolver el inconveniente.</p>
+                    </div>
+                  </div>
+                )}
+                {latestLead?.desembolso_estado === 'exitoso' && (
+                  <div className="flex items-start gap-3 bg-green-50 border border-green-300 rounded-xl p-3">
+                    <CheckCircle2 size={18} className="text-green-600 flex-shrink-0 mt-0.5"/>
+                    <p className="text-sm font-semibold text-green-800">¡Desembolso exitoso! Tu dinero fue enviado correctamente.</p>
+                  </div>
+                )}
                 <LoanCard loan={activeLoan} />
                 <button
                   onClick={() => setContractLoan(activeLoan)}
@@ -333,14 +359,26 @@ export default function DashboardPage() {
               <div className="space-y-3 animate-fade-up delay-200">
                 <h3 className="font-bold text-gray-700">Solicitudes</h3>
                 {leads.map(lead => (
-                  <div key={lead.id} className="card-hover border border-gray-50 shadow-sm">
+                  <div key={lead.id} className={`card-hover border shadow-sm ${lead.desembolso_estado === 'incorrecto' ? 'border-red-200 bg-red-50/30' : 'border-gray-50'}`}>
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="font-bold text-gray-800 text-sm">{lead.monto_necesario}</p>
                         <p className="text-gray-400 text-xs">{lead.proposito}</p>
                         <p className="text-gray-300 text-xs mt-1">{new Date(lead.created_at).toLocaleDateString('es-US')}</p>
                       </div>
-                      <span className="badge bg-blue-100 text-blue-700">{STAGE_LABELS[lead.stage] || lead.stage || 'nuevo'}</span>
+                      <div className="flex flex-col items-end gap-1.5">
+                        <span className="badge bg-blue-100 text-blue-700">{STAGE_LABELS[lead.stage] || lead.stage || 'nuevo'}</span>
+                        {lead.desembolso_estado === 'incorrecto' && (
+                          <span className="flex items-center gap-1 text-xs font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded-full">
+                            <XCircle size={11}/> Error desembolso
+                          </span>
+                        )}
+                        {lead.desembolso_estado === 'exitoso' && (
+                          <span className="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                            <CheckCircle2 size={11}/> Desembolso exitoso
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
