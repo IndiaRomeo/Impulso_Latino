@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Users, TrendingUp, DollarSign, Clock, Search, Plus, LayoutGrid, List, ArrowLeft, MessageSquare, CheckCheck, Mail, Phone, Reply, X, UserCog } from 'lucide-react'
+import { Users, TrendingUp, DollarSign, Clock, Search, Plus, LayoutGrid, List, ArrowLeft, MessageSquare, CheckCheck, Mail, Phone, Reply, X, UserCog, Archive, ArchiveRestore } from 'lucide-react'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import Logo from '../components/Logo.jsx'
@@ -32,6 +32,7 @@ export default function AdminPage() {
   const [search, setSearch]           = useState('')
   const [stageFilter, setStageFilter] = useState('all')
   const [clientSearch, setClientSearch] = useState('')
+  const [showArchived, setShowArchived] = useState(false)
 
   useEffect(() => { fetchAll() }, [])
 
@@ -65,6 +66,7 @@ export default function AdminPage() {
       codigo_postal_admin:     updated.codigo_postal_admin || null,
       estado_civil_admin:      updated.estado_civil_admin || null,
       desembolso_estado:       updated.desembolso_estado || null,
+      archived:                updated.archived === true,
     }).eq('id', updated.id)
 
     // Sync admin-filled fields to the client's profile so they see it in their Perfil tab
@@ -92,11 +94,15 @@ export default function AdminPage() {
     setSelectedProfile(updated)
   }
 
+  const activeLeads   = leads.filter(l => !l.archived)
+  const archivedLeads = leads.filter(l => l.archived)
+
   const filtered = leads.filter(l => {
     const s = search.toLowerCase()
-    const matchSearch = l.nombre?.toLowerCase().includes(s) || l.telefono?.includes(s) || l.estado_residencia?.toLowerCase().includes(s) || l.email?.toLowerCase().includes(s)
-    const matchStage  = stageFilter === 'all' || l.stage === stageFilter
-    return matchSearch && matchStage
+    const matchSearch   = l.nombre?.toLowerCase().includes(s) || l.telefono?.includes(s) || l.estado_residencia?.toLowerCase().includes(s) || l.email?.toLowerCase().includes(s)
+    const matchStage    = stageFilter === 'all' || l.stage === stageFilter
+    const matchArchived = showArchived ? l.archived === true : !l.archived
+    return matchSearch && matchStage && matchArchived
   })
 
   const filteredProfiles = profiles.filter(p => {
@@ -107,10 +113,10 @@ export default function AdminPage() {
   const unread = messages.filter(m => !m.leido).length
 
   const stats = [
-    { label: 'Total Leads',     value: leads.length,                                        icon: Users,         bg: 'bg-blue-50',   fg: 'text-blue-600' },
-    { label: 'Nuevos',          value: leads.filter(l => l.stage === 'nuevo').length,        icon: TrendingUp,    bg: 'bg-green-50',  fg: 'text-green-600' },
-    { label: 'Desembolsados',   value: leads.filter(l => l.stage === 'desembolsado').length, icon: DollarSign,    bg: 'bg-yellow-50', fg: 'text-accent' },
-    { label: 'Mensajes nuevos', value: unread,                                               icon: MessageSquare, bg: 'bg-purple-50', fg: 'text-purple-600' },
+    { label: 'Leads Activos',   value: activeLeads.length,                                         icon: Users,         bg: 'bg-blue-50',   fg: 'text-blue-600' },
+    { label: 'Nuevos',          value: activeLeads.filter(l => l.stage === 'nuevo').length,         icon: TrendingUp,    bg: 'bg-green-50',  fg: 'text-green-600' },
+    { label: 'Desembolsados',   value: activeLeads.filter(l => l.stage === 'desembolsado').length,  icon: DollarSign,    bg: 'bg-yellow-50', fg: 'text-accent' },
+    { label: 'Mensajes nuevos', value: unread,                                                      icon: MessageSquare, bg: 'bg-purple-50', fg: 'text-purple-600' },
   ]
 
   if (loading) return (
@@ -201,7 +207,7 @@ export default function AdminPage() {
                   {PIPELINE_STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                 </select>
               </div>
-              <div className="flex items-center gap-2 justify-between sm:justify-end">
+              <div className="flex items-center gap-2 justify-between sm:justify-end flex-wrap">
                 <div className="bg-gray-100 rounded-xl p-1 flex">
                   {[['kanban','Kanban',LayoutGrid],['list','Lista',List]].map(([id,label,Icon]) => (
                     <button key={id} onClick={() => setView(id)}
@@ -210,6 +216,12 @@ export default function AdminPage() {
                     </button>
                   ))}
                 </div>
+                <button
+                  onClick={() => { setShowArchived(s => !s); setSearch(''); setStageFilter('all') }}
+                  className={`flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all ${showArchived ? 'bg-orange-500 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}
+                >
+                  {showArchived ? <><ArchiveRestore size={15}/> Ver activos</> : <><Archive size={15}/> Archivados{archivedLeads.length > 0 && ` (${archivedLeads.length})`}</>}
+                </button>
                 <button onClick={fetchAll}
                   className="bg-primary/10 hover:bg-primary/20 text-primary font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 text-sm transition-colors">
                   <Plus size={16}/> Actualizar
@@ -232,6 +244,14 @@ export default function AdminPage() {
         </div>
 
         {/* LEADS CONTENT */}
+        {mainTab === 'leads' && showArchived && (
+          <div className="mb-4 flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-xl px-5 py-3">
+            <Archive size={16} className="text-orange-500 flex-shrink-0"/>
+            <p className="text-sm text-orange-800 font-semibold">Mostrando {archivedLeads.length} lead{archivedLeads.length !== 1 ? 's' : ''} archivado{archivedLeads.length !== 1 ? 's' : ''} — estos no aparecen en el pipeline activo.</p>
+            <button onClick={() => setShowArchived(false)} className="ml-auto text-xs text-orange-600 hover:text-orange-800 font-bold underline flex-shrink-0">Volver al pipeline</button>
+          </div>
+        )}
+
         {mainTab === 'leads' && (
           view === 'kanban' ? (
             <KanbanBoard leads={filtered} onLeadClick={setSelectedLead} />
@@ -240,7 +260,7 @@ export default function AdminPage() {
               <table className="w-full text-sm min-w-[700px]">
                 <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
-                    {['Nombre','Email','Teléfono','Estado','Ingresos','Monto','Etapa','Fecha'].map(h => (
+                    {['Nombre','Email','Teléfono','Estado','Ingresos','Monto', showArchived ? 'Estado' : 'Etapa','Fecha'].map(h => (
                       <th key={h} className="text-left px-5 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
@@ -256,7 +276,12 @@ export default function AdminPage() {
                         <td className="px-5 py-4 text-gray-500">{lead.estado_residencia}</td>
                         <td className="px-5 py-4 text-gray-500">{lead.ingresos}</td>
                         <td className="px-5 py-4 font-medium text-primary">{lead.monto_necesario}</td>
-                        <td className="px-5 py-4"><span className={`badge ${si?.color}`}>{si?.label}</span></td>
+                        <td className="px-5 py-4">
+                          {showArchived
+                            ? <span className="badge bg-orange-100 text-orange-700 flex items-center gap-1 w-fit"><Archive size={11}/>Archivado</span>
+                            : <span className={`badge ${si?.color}`}>{si?.label}</span>
+                          }
+                        </td>
                         <td className="px-5 py-4 text-gray-400 text-xs">{new Date(lead.created_at).toLocaleDateString('es-US')}</td>
                       </tr>
                     )

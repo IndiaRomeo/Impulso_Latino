@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { X, Phone, Mail, MapPin, DollarSign, Building2, CreditCard, FileText, Upload, Calculator, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { X, Phone, Mail, MapPin, DollarSign, Building2, CreditCard, FileText, Upload, Calculator, CheckCircle, XCircle, AlertCircle, Archive, ArchiveRestore } from 'lucide-react'
 import { supabase } from '../../lib/supabase.js'
 import ContractModal from '../ContractModal.jsx'
 
@@ -50,8 +50,10 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
   const [existingLoan, setExistingLoan]   = useState(null)
   const [loanInitialized, setLoanInit]    = useState(false)
   const [desembolsoEstado, setDesembolsoEstado] = useState(lead.desembolso_estado || '')
-  const [settingStatus, setSettingStatus] = useState(false)
-  const [showContract, setShowContract]   = useState(false)
+  const [settingStatus, setSettingStatus]   = useState(false)
+  const [showContract, setShowContract]     = useState(false)
+  const [archiveConfirm, setArchiveConfirm] = useState(false)
+  const [archiving, setArchiving]           = useState(false)
 
   const rateDecimal = calcRate / 100
   const monthly = calcTerm > 0 ? ((calcAmount * (1 + rateDecimal)) / calcTerm).toFixed(2) : '0.00'
@@ -137,6 +139,16 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
     setStage('desembolsado')
     setCreatingLoan(false)
     setLoanMessage('Prestamo creado correctamente.')
+  }
+
+  async function handleArchive() {
+    setArchiving(true)
+    const newArchived = !lead.archived
+    await supabase.from('leads').update({ archived: newArchived }).eq('id', lead.id)
+    setArchiving(false)
+    setArchiveConfirm(false)
+    onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado, archived: newArchived })
+    onClose()
   }
 
   async function setDisbursementStatus(status) {
@@ -361,6 +373,45 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Archive / Restore */}
+            <div className="border-t border-gray-100 pt-2">
+              {!archiveConfirm ? (
+                <button
+                  type="button"
+                  onClick={() => setArchiveConfirm(true)}
+                  className={`w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold rounded-xl border border-dashed transition-all ${
+                    lead.archived
+                      ? 'border-green-200 text-green-600 hover:bg-green-50 hover:border-green-400'
+                      : 'border-gray-200 text-gray-400 hover:text-orange-600 hover:bg-orange-50 hover:border-orange-300'
+                  }`}
+                >
+                  {lead.archived
+                    ? <><ArchiveRestore size={15}/> Restaurar lead al pipeline</>
+                    : <><Archive size={15}/> Archivar lead</>
+                  }
+                </button>
+              ) : (
+                <div className={`rounded-xl p-4 border ${lead.archived ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200'}`}>
+                  <p className={`text-sm font-bold mb-1 ${lead.archived ? 'text-green-800' : 'text-orange-800'}`}>
+                    {lead.archived ? '¿Restaurar este lead?' : '¿Archivar este lead?'}
+                  </p>
+                  <p className={`text-xs mb-3 ${lead.archived ? 'text-green-700' : 'text-orange-700'}`}>
+                    {lead.archived
+                      ? 'Volverá a aparecer en el pipeline activo.'
+                      : 'Se ocultará del pipeline. Puedes consultarlo en "Ver archivados" cuando lo necesites.'}
+                  </p>
+                  <div className="flex gap-2">
+                    <button onClick={() => setArchiveConfirm(false)} className={`flex-1 py-2 rounded-lg border text-sm font-semibold ${lead.archived ? 'border-green-200 text-green-700' : 'border-orange-200 text-orange-700'}`}>
+                      Cancelar
+                    </button>
+                    <button onClick={handleArchive} disabled={archiving} className={`flex-1 py-2 rounded-lg text-white text-sm font-bold disabled:opacity-60 ${lead.archived ? 'bg-green-600 hover:bg-green-700' : 'bg-orange-500 hover:bg-orange-600'}`}>
+                      {archiving ? 'Procesando...' : 'Confirmar'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-3 pb-4">

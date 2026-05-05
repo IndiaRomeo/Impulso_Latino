@@ -367,16 +367,16 @@ export default function DashboardPage() {
                         <p className="text-gray-300 text-xs mt-1">{new Date(lead.created_at).toLocaleDateString('es-US')}</p>
                       </div>
                       <div className="flex flex-col items-end gap-1.5">
-                        <span className="badge bg-blue-100 text-blue-700">{STAGE_LABELS[lead.stage] || lead.stage || 'nuevo'}</span>
-                        {lead.desembolso_estado === 'incorrecto' && (
-                          <span className="flex items-center gap-1 text-xs font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded-full">
+                        {lead.desembolso_estado === 'incorrecto' ? (
+                          <span className="flex items-center gap-1 text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full">
                             <XCircle size={11}/> Error desembolso
                           </span>
-                        )}
-                        {lead.desembolso_estado === 'exitoso' && (
-                          <span className="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                        ) : lead.desembolso_estado === 'exitoso' ? (
+                          <span className="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full">
                             <CheckCircle2 size={11}/> Desembolso exitoso
                           </span>
+                        ) : (
+                          <span className="badge bg-blue-100 text-blue-700">{STAGE_LABELS[lead.stage] || lead.stage || 'nuevo'}</span>
                         )}
                       </div>
                     </div>
