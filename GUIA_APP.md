@@ -1,4 +1,4 @@
-## 10. ¿Cómo instalar la App en tu Celular o Computadora?
+## ¿Cómo instalar la App en tu Celular o Computadora?
 
 Puedes instalar la plataforma de Impulso Latino directamente en tu dispositivo para que funcione como una aplicación nativa. Esto te permitirá acceder con un solo toque, sin necesidad de escribir la dirección en el navegador cada vez.
 
