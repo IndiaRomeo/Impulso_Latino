@@ -25,7 +25,7 @@ export default function Hero() {
             </h1>
 
             <p className="text-xl text-blue-100 mb-9 leading-relaxed animate-fade-up delay-200">
-              Aprobación rápida, sin tantos requisitos y atención personalizada en español.
+              Somos un fondo de inversores colombianos que se ha enfocado en ayudar a la comunidad latina en Estados Unidos a acceder a créditos rápidos y seguros.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-up delay-300">

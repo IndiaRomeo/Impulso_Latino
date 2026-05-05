@@ -9,11 +9,11 @@ Para guardar la aplicación en tu iPhone, es indispensable utilizar el navegador
 1. Abre Safari y entra a la página web de Impulso Latino.
 2. En la barra de navegación de la parte inferior, toca el botón **Compartir** (el ícono cuadrado con una flecha apuntando hacia arriba).
 
-<img src="./public/WhatsApp_Image_2026-05-05_at_2.26.26_AM_(1).jpeg" width="260" style="display:block; margin:16px auto;" />
+<img src="./public/WhatsApp_Image_2026-05-05_at_2.26.26_AM.jpeg" width="260" style="display:block; margin:16px auto;" />
 
 3. En el menú que se despliega, desliza hacia abajo y selecciona la opción **"Agregar a Inicio"** (o *Add to Home Screen* en inglés).
 
-<img src="./public/WhatsApp_Image_2026-05-05_at_2.26.26_AM.jpeg" width="260" style="display:block; margin:16px auto;" />
+<img src="./public/WhatsApp_Image_2026-05-05_at_2.26.26_AM_(1).jpeg" width="260" style="display:block; margin:16px auto;" />
 
 4. Confirma la acción tocando "Agregar" en la esquina superior derecha.
 5. ¡Listo! Ahora verás el ícono de la aplicación de **Impulso Latino** directamente en tu pantalla de inicio, junto a tus otras aplicaciones.

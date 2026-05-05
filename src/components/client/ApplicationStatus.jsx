@@ -1,4 +1,4 @@
-import { Clock, Phone, FileText, CheckCircle2, DollarSign, Circle, AlertCircle } from 'lucide-react'
+import { Clock, Phone, FileText, CheckCircle2, DollarSign, Circle, AlertCircle, XCircle } from 'lucide-react'
 
 const STAGES = [
   { id: 'nuevo',       label: 'Solicitud recibida',   icon: FileText,     desc: 'Tu solicitud fue recibida y está en revisión inicial.' },
@@ -10,10 +10,12 @@ const STAGES = [
 
 export default function ApplicationStatus({ lead, onOpenDisbursement }) {
   if (!lead) return null
-  const currentIdx = STAGES.findIndex(s => s.id === lead.stage)
-  const isApprovalFinal = lead.stage === 'llamada2'
+  const currentIdx              = STAGES.findIndex(s => s.id === lead.stage)
+  const isApprovalFinal         = lead.stage === 'llamada2'
+  const isDisbursed             = lead.stage === 'desembolsado'
   const isDisbursementCompleted = lead.desembolso_completado
-  const showDisbursementButton = isApprovalFinal && !isDisbursementCompleted
+  const showDisbursementButton  = isApprovalFinal && !isDisbursementCompleted
+  const desembolsoEstado        = lead.desembolso_estado // 'exitoso' | 'incorrecto' | null
 
   return (
     <div className="card shadow-sm border border-gray-50">
@@ -24,11 +26,12 @@ export default function ApplicationStatus({ lead, onOpenDisbursement }) {
 
       <div className="space-y-3">
         {STAGES.map((stage, idx) => {
-          const Icon = stage.icon
-          const done = idx < currentIdx
-          const active = idx === currentIdx
+          const Icon    = stage.icon
+          const done    = idx < currentIdx
+          const active  = idx === currentIdx
           const pending = idx > currentIdx
           const isThisStageForDisbursement = stage.id === 'llamada2' && active && !isDisbursementCompleted
+          const isDisbursedStage = stage.id === 'desembolsado' && active
 
           return (
             <div key={stage.id}>
@@ -56,7 +59,7 @@ export default function ApplicationStatus({ lead, onOpenDisbursement }) {
                     <p className={`font-semibold text-sm ${done ? 'text-green-700' : active ? 'text-primary' : 'text-gray-400'}`}>
                       {stage.label}
                     </p>
-                    {active && !isDisbursementCompleted && (
+                    {active && !isDisbursementCompleted && stage.id !== 'desembolsado' && (
                       <span className="text-xs bg-primary text-white px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
                         <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span> Ahora
                       </span>
@@ -73,13 +76,11 @@ export default function ApplicationStatus({ lead, onOpenDisbursement }) {
                 </div>
               </div>
 
-              {/* Botón para abrir formulario de desembolso - SOLO en llamada2 activa */}
+              {/* Botón formulario desembolso */}
               {isThisStageForDisbursement && (
                 <div className="mt-3 animate-in slide-in-from-bottom-4 duration-500">
-                  <button
-                    onClick={onOpenDisbursement}
-                    className="w-full bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 hover:border-green-400 rounded-xl p-4 text-left transition-all group hover:shadow-md"
-                  >
+                  <button onClick={onOpenDisbursement}
+                    className="w-full bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 hover:border-green-400 rounded-xl p-4 text-left transition-all group hover:shadow-md">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
                         <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
@@ -96,7 +97,7 @@ export default function ApplicationStatus({ lead, onOpenDisbursement }) {
                 </div>
               )}
 
-              {/* Indicador de formulario completado */}
+              {/* Formulario completado en llamada2 */}
               {isDisbursementCompleted && isApprovalFinal && stage.id === 'llamada2' && (
                 <div className="mt-3 bg-green-50 border border-green-200 rounded-xl p-3 flex items-start gap-2">
                   <CheckCircle2 size={18} className="text-green-600 flex-shrink-0 mt-0.5" />
@@ -104,6 +105,34 @@ export default function ApplicationStatus({ lead, onOpenDisbursement }) {
                     <p className="font-semibold text-green-800">Formulario completado</p>
                     <p className="text-xs text-green-700 mt-0.5">Tu información ha sido recibida. Pronto recibirás el código de acceso para completar el desembolso.</p>
                   </div>
+                </div>
+              )}
+
+              {/* Estado del desembolso — visible solo en etapa desembolsado */}
+              {isDisbursedStage && desembolsoEstado === 'exitoso' && (
+                <div className="mt-3 bg-green-50 border border-green-300 rounded-xl p-4 flex items-start gap-3">
+                  <CheckCircle2 size={22} className="text-green-600 flex-shrink-0 mt-0.5"/>
+                  <div>
+                    <p className="font-bold text-green-800">¡Desembolso exitoso!</p>
+                    <p className="text-sm text-green-700 mt-0.5">Tu dinero fue enviado correctamente a tu cuenta. Puedes revisar los detalles en la sección "Mi Cuenta".</p>
+                  </div>
+                </div>
+              )}
+
+              {isDisbursedStage && desembolsoEstado === 'incorrecto' && (
+                <div className="mt-3 bg-red-50 border border-red-300 rounded-xl p-4 flex items-start gap-3">
+                  <XCircle size={22} className="text-red-500 flex-shrink-0 mt-0.5"/>
+                  <div>
+                    <p className="font-bold text-red-800">Problema con el desembolso</p>
+                    <p className="text-sm text-red-700 mt-0.5">Hubo un inconveniente al procesar tu pago. Un asesor te contactará pronto para resolverlo.</p>
+                  </div>
+                </div>
+              )}
+
+              {isDisbursedStage && !desembolsoEstado && (
+                <div className="mt-3 bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-start gap-2">
+                  <AlertCircle size={18} className="text-blue-500 flex-shrink-0 mt-0.5"/>
+                  <p className="text-sm text-blue-700">Tu desembolso está en proceso. Un asesor confirmará el envío pronto.</p>
                 </div>
               )}
             </div>

@@ -1,7 +1,7 @@
 import { CheckCircle2, DollarSign, MapPin, CreditCard, Building2 } from 'lucide-react'
 
 const reqs = [
-  { icon: DollarSign, text: 'Ingresos mínimos comprobables de $2,000+ al mes' },
+  { icon: DollarSign, text: 'Ingresos mínimos comprobables al mes' },
   { icon: MapPin, text: 'Vivir dentro de los Estados Unidos' },
   { icon: CreditCard, text: 'Documento de identificación válido (ID del estado o licencia)' },
   { icon: Building2, text: 'Cuenta bancaria activa en USA' },

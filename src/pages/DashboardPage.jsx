@@ -9,6 +9,7 @@ import ApplicationStatus from '../components/client/ApplicationStatus.jsx'
 import LoanCard from '../components/client/LoanCard.jsx'
 import NewLoanRequestModal from '../components/client/NewLoanRequestModal.jsx'
 import DisbursementFormModal from '../components/client/DisbursementFormModal.jsx'
+import ContractModal from '../components/ContractModal.jsx'
 
 const WA_NUMBER = '13235031139'
 
@@ -33,6 +34,7 @@ export default function DashboardPage() {
   const [editingProfile, setEditingProfile] = useState(false)
   const [savingProfile, setSavingProfile] = useState(false)
   const [profileError, setProfileError] = useState('')
+  const [contractLoan, setContractLoan] = useState(null)
   const [profileForm, setProfileForm] = useState({
     nombre: '',
     telefono: '',
@@ -278,9 +280,15 @@ export default function DashboardPage() {
               <ProfileCard profile={profile} loan={activeLoan} />
             </div>
             {activeLoan ? (
-              <div className="animate-fade-up delay-200">
+              <div className="animate-fade-up delay-200 space-y-3">
                 <h3 className="font-bold text-primary mb-3">Detalles del prestamo activo</h3>
                 <LoanCard loan={activeLoan} />
+                <button
+                  onClick={() => setContractLoan(activeLoan)}
+                  className="w-full flex items-center justify-center gap-2 py-3 border-2 border-primary/20 hover:border-primary text-primary font-semibold text-sm rounded-xl transition-all hover:bg-primary/5"
+                >
+                  <FileText size={15}/> Ver Contrato de Crédito
+                </button>
               </div>
             ) : (
               <div className="card text-center py-8 animate-fade-up delay-200">
@@ -307,7 +315,17 @@ export default function DashboardPage() {
             {loans.length > 0 && (
               <div className="space-y-4 animate-fade-up delay-100">
                 <h3 className="font-bold text-gray-700">Prestamos</h3>
-                {loans.map(l => <LoanCard key={l.id} loan={l} />)}
+                {loans.map(l => (
+                  <div key={l.id} className="space-y-2">
+                    <LoanCard loan={l} />
+                    <button
+                      onClick={() => setContractLoan(l)}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-primary/20 hover:border-primary text-primary font-semibold text-sm rounded-xl transition-all hover:bg-primary/5"
+                    >
+                      <FileText size={14}/> Ver Contrato
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
 
@@ -462,6 +480,15 @@ export default function DashboardPage() {
             setDisbursementLead(null)
           }}
           onCompleted={handleDisbursementCompleted}
+        />
+      )}
+
+      {contractLoan && (
+        <ContractModal
+          clientName={profile?.nombre || user?.email || 'Cliente'}
+          clientEmail={user?.email}
+          loan={contractLoan}
+          onClose={() => setContractLoan(null)}
         />
       )}
     </div>
