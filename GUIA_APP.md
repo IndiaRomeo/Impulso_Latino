@@ -9,16 +9,16 @@ Para guardar la aplicación en tu iPhone, es indispensable utilizar el navegador
 1. Abre Safari y entra a la página web de Impulso Latino.
 2. En la barra de navegación de la parte inferior, toca el botón **Compartir** (el ícono cuadrado con una flecha apuntando hacia arriba).
 
-![Menú de Compartir en Safari](./public/WhatsApp_Image_2026-05-05_at_2.26.26_AM_(1).jpeg)
+<img src="./public/WhatsApp_Image_2026-05-05_at_2.26.26_AM_(1).jpeg" width="260" style="display:block; margin:16px auto;" />
 
 3. En el menú que se despliega, desliza hacia abajo y selecciona la opción **"Agregar a Inicio"** (o *Add to Home Screen* en inglés).
 
-![Opción Agregar a Inicio](./public/WhatsApp_Image_2026-05-05_at_2.26.26_AM.jpeg)
+<img src="./public/WhatsApp_Image_2026-05-05_at_2.26.26_AM.jpeg" width="260" style="display:block; margin:16px auto;" />
 
 4. Confirma la acción tocando "Agregar" en la esquina superior derecha.
 5. ¡Listo! Ahora verás el ícono de la aplicación de **Impulso Latino** directamente en tu pantalla de inicio, junto a tus otras aplicaciones.
 
-![Ícono en pantalla de inicio](./public/WhatsApp_Image_2026-05-05_at_2.26.26_AM_(2).jpeg)
+<img src="./public/WhatsApp_Image_2026-05-05_at_2.26.26_AM_(2).jpeg" width="260" style="display:block; margin:16px auto;" />
 
 ### Instalación en Android y Computadora (Google Chrome)
 
@@ -27,11 +27,11 @@ Si utilizas un dispositivo Android o estás navegando desde tu computadora con G
 1. Abre Google Chrome y entra a la página de Impulso Latino.
 2. Ve a la barra de direcciones en la parte superior. Allí verás un ícono de instalación o, dependiendo de tu dispositivo, puede aparecer una ventana emergente.
 
-![Vista en Chrome](./public/image_0fa201.png)
+<img src="./public/image_0fa201.png" width="480" style="display:block; margin:16px auto;" />
 
 3. Haz clic o toca en la opción que dice **"Instalar Impulso Latino - Préstamos para la Comunidad Latina"**.
 
-![Ventana emergente de Instalación](./public/image_0f9ebe.png)
+<img src="./public/image_0f9ebe.png" width="480" style="display:block; margin:16px auto;" />
 
 4. En la ventana de confirmación, presiona el botón **"Instalar"**.
 5. En Android, la app aparecerá en tu pantalla de inicio. En computadora, se abrirá en una ventana independiente y podrás anclarla a tu barra de tareas.
