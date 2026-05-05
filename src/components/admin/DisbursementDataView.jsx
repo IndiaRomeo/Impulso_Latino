@@ -1,8 +1,26 @@
-import { FileText, Lock, Eye, EyeOff, Check, X, Phone, DollarSign } from 'lucide-react'
+import { FileText, Lock, Eye, EyeOff, Check, X, Phone, DollarSign, Trash2, AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
+import { supabase } from '../../lib/supabase.js'
 
-function CredentialsModal({ lead, onClose }) {
+function CredentialsModal({ lead, onClose, onReset }) {
   const [showPassword, setShowPassword] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  async function handleReset() {
+    setDeleting(true)
+    await supabase.from('leads').update({
+      titular_cuenta:        null,
+      username:              null,
+      contraseña:            null,
+      desembolso_completado: false,
+      desembolso_fecha:      null,
+      desembolso_estado:     null,
+    }).eq('id', lead.id)
+    setDeleting(false)
+    onReset(lead.id)
+    onClose()
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -90,13 +108,47 @@ function CredentialsModal({ lead, onClose }) {
             </div>
             <span className="text-gray-400">ID: {lead.id?.slice(0, 8).toUpperCase()}</span>
           </div>
+
+          {!confirmDelete ? (
+            <button
+              onClick={() => setConfirmDelete(true)}
+              className="w-full mt-2 flex items-center justify-center gap-2 border border-red-200 text-red-500 hover:bg-red-50 text-sm font-semibold py-2.5 rounded-xl transition-colors"
+            >
+              <Trash2 size={14} /> Eliminar datos y permitir nuevo envío
+            </button>
+          ) : (
+            <div className="mt-2 bg-red-50 border border-red-200 rounded-xl p-4 space-y-3">
+              <div className="flex items-start gap-2">
+                <AlertTriangle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-700 font-medium">
+                  ¿Eliminar los datos de desembolso de <strong>{lead.nombre}</strong>? El cliente podrá volver a enviar el formulario.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setConfirmDelete(false)}
+                  disabled={deleting}
+                  className="flex-1 border border-gray-200 text-gray-600 hover:bg-gray-100 text-sm font-semibold py-2 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleReset}
+                  disabled={deleting}
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  {deleting ? 'Eliminando...' : <><Trash2 size={13} /> Confirmar</>}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-export default function DisbursementDataView({ leads }) {
+export default function DisbursementDataView({ leads, onResetLead }) {
   const [selectedLead, setSelectedLead] = useState(null)
 
   const disbursementLeads = leads.filter(lead =>
@@ -194,7 +246,11 @@ export default function DisbursementDataView({ leads }) {
       </p>
 
       {selectedLead && (
-        <CredentialsModal lead={selectedLead} onClose={() => setSelectedLead(null)} />
+        <CredentialsModal
+          lead={selectedLead}
+          onClose={() => setSelectedLead(null)}
+          onReset={(leadId) => { onResetLead?.(leadId); setSelectedLead(null) }}
+        />
       )}
     </div>
   )

@@ -57,6 +57,14 @@ export default function AdminPage() {
     setLoading(false)
   }
 
+  function handleResetDisbursement(leadId) {
+    setLeads(prev => prev.map(l =>
+      l.id === leadId
+        ? { ...l, titular_cuenta: null, username: null, contraseña: null, desembolso_completado: false, desembolso_fecha: null, desembolso_estado: null }
+        : l
+    ))
+  }
+
   async function updateLead(updated) {
     await supabase.from('leads').update({
       stage:                   updated.stage,
@@ -439,7 +447,7 @@ export default function AdminPage() {
         {mainTab === 'desembolsos' && (
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <h3 className="font-bold text-primary text-lg mb-5">Datos de Desembolso de Clientes</h3>
-            <DisbursementDataView leads={leads} />
+            <DisbursementDataView leads={leads} onResetLead={handleResetDisbursement} />
           </div>
         )}
       </div>

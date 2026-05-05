@@ -4,7 +4,7 @@
 ---
 
 > **Documento confidencial** — Preparado exclusivamente para el equipo de Impulso Latino.  
-> Versión 1.0 · Mayo 2026
+> Versión 0.4 · Mayo 2026
 
 ---
 
@@ -70,34 +70,34 @@ La página principal es la cara pública de Impulso Latino. Está diseñada para
 
 ### Secciones de la página:
 
-#### 🏠 Hero (Portada)
+#### Hero (Portada)
 - Mensaje principal con propuesta de valor
 - **Calculadora de préstamo interactiva** — el visitante puede mover el slider para ver cuánto pagaría mensualmente según el monto y plazo
 - Botón "Aplicar ahora" que lleva directamente al formulario
 - Estadísticas de confianza (clientes, tiempo de aprobación)
 
-#### ⚙️ ¿Cómo Funciona?
+#### ¿Cómo Funciona?
 - Explica el proceso en 4 pasos simples: Formulario → Evaluación → Llamada → Dinero
 - Diseñado para reducir el miedo o confusión del cliente potencial
 
-#### ✅ Requisitos
+#### Requisitos
 - Lista los requisitos mínimos de manera clara y no intimidante
 - Incluye la sección "¿Por qué elegirnos?" con los diferenciadores de Impulso Latino
 
-#### 🌟 Testimonios y Confianza
+#### Testimonios y Confianza
 - Testimonios de clientes reales con montos aprobados
 - Pilares de confianza: datos protegidos, sin intermediarios, transparencia total
 
-#### 👥 Quiénes Somos
+#### Quiénes Somos
 - Historia y valores de Impulso Latino
 - Estadísticas de la empresa (años de experiencia, clientes, satisfacción)
 
-#### 📞 Contacto
+#### Contacto
 - Formulario de contacto rápido (nombre, teléfono, email, mensaje)
 - Los mensajes llegan directamente al panel de administración
 - Información de WhatsApp, email y horario de atención
 
-#### 📄 Footer
+#### Footer
 - Links a información legal (privacidad, términos)
 - Datos de contacto
 - Acceso rápido al portal (`/login`)
@@ -116,7 +116,7 @@ El cliente ingresa:
 - Número de teléfono
 - Estado de residencia en USA
 
-> 📌 **Nota para el admin:** Si el cliente ya tiene una cuenta (porque aplicó antes), el sistema lo detecta y usa la cuenta existente. No se crean cuentas duplicadas.
+> **Nota para el admin:** Si el cliente ya tiene una cuenta (porque aplicó antes), el sistema lo detecta y usa la cuenta existente. No se crean cuentas duplicadas.
 
 ### Paso 2 — Situación Laboral
 - ¿Está trabajando actualmente?
@@ -130,7 +130,7 @@ El cliente ingresa:
 - Tiempo usando esa cuenta
 - ¿Tiene historial crediticio en USA?
 
-> 📌 Si el cliente dice "No" a tener cuenta bancaria, el sistema muestra un mensaje de advertencia informándole que es necesaria para recibir el préstamo.
+> **Nota:** Si el cliente dice "No" a tener cuenta bancaria, el sistema muestra un mensaje de advertencia informándole que es necesaria para recibir el préstamo.
 
 ### Paso 4 — Detalles del Préstamo
 - Monto necesario (rangos: $500–$1,000 / $1,000–$2,000 / $2,000–$5,000 / Más de $5,000)
@@ -152,48 +152,62 @@ El cliente ingresa:
 
 Después de aplicar, el cliente puede iniciar sesión en cualquier momento para ver el estado de su solicitud. El portal tiene **4 secciones principales** (pestañas en la parte superior).
 
-### 🏠 Pestaña: Inicio
+### Pestaña: Inicio
 
 Es la pantalla principal. Muestra:
 - **Saludo personalizado** con el nombre del cliente
-- **Banner de estado** — si tiene solicitud en proceso o préstamo activo
+- **Banner de estado** — indica si el préstamo está activo. El color del banner cambia según el estado del desembolso:
+  - **Verde** — préstamo activo, todo en orden
+  - **Rojo** — hubo un problema con el desembolso, debe contactar al asesor
 - **Mini estadísticas** — número de solicitudes, préstamos, y estado actual
-- **Estado detallado de la solicitud** — una línea de tiempo visual que muestra en qué etapa está su solicitud:
-  1. ✅ Solicitud recibida
-  2. ✅ Pre-aprobación
-  3. ✅ Documentos
-  4. ✅ Aprobación final
-  5. ✅ ¡Dinero enviado!
+- **Línea de tiempo visual** — muestra en qué etapa está la solicitud:
+  1. Solicitud recibida
+  2. Pre-aprobación
+  3. Documentos
+  4. Aprobación final
+  5. ¡Dinero enviado!
 - **Botón de WhatsApp** para contactar al equipo directamente
 
-> 🔑 **Acción importante del cliente:** Cuando la solicitud llega a la etapa "Aprobación final", el cliente verá un botón especial para **completar el formulario de desembolso**. Esta es la parte donde el cliente proporciona sus datos bancarios para recibir el dinero.
+> **Acción importante del cliente:** Cuando la solicitud llega a la etapa "Aprobación final" (Llamada 2), el cliente verá un botón especial para **completar el formulario de desembolso**. Esta es la parte donde proporciona sus datos bancarios para recibir el dinero.
 
-### 💳 Pestaña: Mi Cuenta
+#### Estado del desembolso en la línea de tiempo
+Cuando la solicitud llega a la etapa final ("¡Dinero enviado!"), la línea de tiempo muestra un recuadro adicional según lo que indique el asesor:
+- **Verde con palomita** — "¡Desembolso exitoso! Tu dinero ha sido enviado correctamente."
+- **Rojo con X** — "Hubo un problema con el desembolso. Por favor contacta a tu asesor para resolverlo."
+- **Azul informativo** — El asesor aún no ha marcado el estado del desembolso.
+
+### Pestaña: Mi Cuenta
 
 Muestra una **tarjeta de crédito animada** con:
 - Nombre del titular
-- Número de cuenta (generado automáticamente por el sistema)
+- Número de cuenta (identificador interno de Impulso Latino)
 - Estado de la cuenta (ACTIVO / PENDIENTE)
 - Saldo pendiente del préstamo activo
 
-Si tiene un préstamo activo, también muestra:
-- Cuota mensual
-- Plazo total
-- Tasa de interés
+Si hay un problema con el desembolso, aparece un **aviso en rojo** encima de la tarjeta indicando que debe contactar a su asesor.
 
-### 📄 Pestaña: Créditos
+Si el préstamo está activo y en orden, muestra:
+- Cuota mensual
+- Plazo total en meses
+- Tasa de interés aplicada
+
+**Botón "Ver Contrato"** — Si el cliente tiene un préstamo activo, puede ver e imprimir su contrato de crédito en cualquier momento. El contrato incluye todos los detalles pactados: monto, plazo, tasa, cuota mensual, total a pagar, y espacios para firmas.
+
+### Pestaña: Créditos
 
 Historial completo de:
-- **Préstamos** — con barra de progreso de pago, detalles de cuota, fecha de vencimiento
-- **Solicitudes** — todas las solicitudes enviadas con su estado actual
+- **Préstamos** — con barra de progreso de pago, detalles de cuota, fecha de vencimiento y botón "Ver Contrato"
+- **Solicitudes** — todas las solicitudes enviadas con su etapa actual. Si el desembolso fue marcado como exitoso o con error, se muestra el badge correspondiente (no la etapa genérica)
 - Botón para **hacer una nueva solicitud** (si el cliente necesita otro préstamo)
 
-### 👤 Pestaña: Perfil
+### Pestaña: Perfil
 
 El cliente puede:
 - Ver todos sus datos guardados
 - **Editar su información** (nombre, teléfono, dirección, estado civil, fecha de nacimiento)
 - Cerrar sesión
+
+> **Nota:** Los datos como fecha de nacimiento, dirección y estado civil también pueden ser llenados por el asesor desde el panel admin, y se sincronizan automáticamente al perfil del cliente.
 
 ---
 
@@ -206,10 +220,12 @@ El panel de administración es el corazón operativo de Impulso Latino. Aquí el
 ### 6.1 Estadísticas en tiempo real
 
 En la parte superior del panel se muestran 4 métricas clave:
-- **Total Leads** — número total de solicitudes recibidas
-- **Nuevos** — leads recién llegados sin gestionar
-- **Desembolsados** — clientes que ya recibieron su préstamo
+- **Total Leads** — número total de solicitudes activas (no archivadas)
+- **Nuevos** — leads recién llegados sin gestionar (solo activos)
+- **Desembolsados** — clientes que ya recibieron su préstamo (solo activos)
 - **Mensajes nuevos** — mensajes de contacto sin leer
+
+> Las estadísticas solo cuentan leads **activos**. Los leads archivados no afectan estos contadores.
 
 ### 6.2 Leads / Pipeline (Pestaña principal)
 
@@ -220,20 +236,31 @@ Las solicitudes se organizan en columnas según su etapa:
 
 | Etapa | ¿Qué significa? |
 |---|---|
-| 🔵 **Nuevo Lead** | La solicitud acaba de llegar, está sin gestionar |
-| 🟡 **Llamada 1** | Se realizó la primera llamada de contacto |
-| 🟠 **Documentos** | Se está verificando la documentación del cliente |
-| 🟣 **Llamada 2** | Segunda llamada para confirmar datos y condiciones |
-| 🟢 **Desembolsado** | El préstamo fue aprobado y enviado |
+| **Nuevo Lead** | La solicitud acaba de llegar, está sin gestionar |
+| **Llamada 1** | Se realizó la primera llamada de contacto |
+| **Documentos** | Se está verificando la documentación del cliente |
+| **Llamada 2** | Segunda llamada / aprobación final |
+| **Desembolsado** | El préstamo fue aprobado y enviado |
 
-> 💡 **Consejo:** El tablero Kanban se puede desplazar horizontalmente en celular para ver todas las etapas.
+> **Consejo:** El tablero Kanban se puede desplazar horizontalmente en celular para ver todas las etapas.
 
 #### Vista Lista (tabla)
-Muestra todos los leads en una tabla con columnas: Nombre, Email, Teléfono, Estado, Ingresos, Monto, Etapa y Fecha. Es útil para buscar rápidamente un cliente específico.
+Muestra todos los leads en una tabla con columnas: Nombre, Email, Teléfono, Estado, Ingresos, Monto, Etapa y Fecha. Útil para buscar rápidamente un cliente específico.
 
 #### Búsqueda y Filtros
 - **Buscador** — busca por nombre, email o teléfono en tiempo real
 - **Filtro por etapa** — muestra solo los leads de una etapa específica
+
+#### Sistema de Archivado
+
+Con el tiempo el pipeline puede acumular muchos leads que ya no están activos (rechazados, abandonados, sin respuesta). Para mantener el tablero limpio existe el sistema de **archivado**:
+
+- **Botón "Archivados (N)"** en la barra de herramientas — muestra cuántos leads están archivados
+- Al hacer clic, el pipeline cambia a **modo archivados** (banner naranja) mostrando solo los leads archivados
+- Para volver a la vista normal, hacer clic en "Ver activos"
+- Los leads archivados no desaparecen del sistema — se pueden **restaurar** en cualquier momento desde el perfil del lead
+
+> Los leads activos y archivados son completamente independientes. Archivar un lead no elimina ningún dato.
 
 ### 6.3 Perfil del Lead (Panel lateral)
 
@@ -245,7 +272,7 @@ Al hacer clic en cualquier lead, se abre un panel lateral con toda la informaci�
 
 #### Cambiar etapa del pipeline
 - Un selector desplegable para mover el lead a cualquier etapa con un solo clic
-- El cambio se guarda automáticamente al presionar "Guardar cambios"
+- El cambio se guarda al presionar "Guardar cambios"
 
 #### Datos completos del formulario
 Toda la información que el cliente proporcionó al aplicar:
@@ -253,32 +280,86 @@ Toda la información que el cliente proporcionó al aplicar:
 - Ingresos, banco, historial crediticio
 - Monto solicitado, propósito del préstamo
 
-#### Calculadora de tasas (herramienta interna)
-El asesor puede estimar cuánto pagaría el cliente a 12, 24 o 36 meses basándose en el monto solicitado. Esto ayuda durante la llamada de negociación.
+#### Calculadora de préstamo (herramienta interna)
 
-#### Crear préstamo activo
-Cuando se mueve un lead a la etapa **"Desembolsado"**, aparece un botón especial para **crear el préstamo activo** en el sistema. Al hacerlo:
-- El préstamo queda registrado en la base de datos
-- El cliente lo puede ver desde su portal inmediatamente
-- La tarjeta del cliente muestra el saldo pendiente y cuota mensual
+El asesor puede definir con precisión las condiciones del préstamo:
+- **Monto** — campo numérico libre (ej: $1,500)
+- **Plazo** — botones preestablecidos de 12, 24 y 36 meses, o escribir cualquier número personalizado
+- **Tasa de interés** — campo numérico libre (los botones de plazo rellenan la tasa sugerida automáticamente: 12m=4%, 24m=5%, 36m=6%)
+- El sistema calcula automáticamente cuota mensual, total a pagar e interés total
+
+Al presionar **"Guardar cambios"**:
+- Si ya existe un préstamo activo para el cliente, se **actualiza** con los nuevos valores (monto, plazo, tasa, cuota, total)
+- Si no existe préstamo, se crea uno nuevo
+
+#### Estado del desembolso
+
+Cuando el lead está en etapa "Desembolsado", el asesor puede marcar el resultado:
+- **"Exitoso"** (verde) — el dinero llegó correctamente a la cuenta del cliente
+- **"Incorrecto"** (rojo) — hubo un problema con la transferencia
+
+Este estado se refleja de inmediato en el portal del cliente (banner, Mi Cuenta, Créditos).
+
+#### Ver e imprimir contrato
+
+Si el cliente tiene un préstamo activo, aparece el botón **"Ver Contrato"**. Esto abre un modal con la previsualización del contrato de crédito, con todos los detalles del préstamo. Desde ahí se puede imprimir o guardar como PDF usando el diálogo de impresión del navegador.
 
 #### Datos adicionales del asesor
+
 Campos que el asesor puede completar internamente:
 - Fecha de nacimiento
 - Estado civil
 - Dirección completa
 - Código postal
 - Notas internas (solo visibles para el equipo)
-- Subir foto del ID / Licencia
 
-### 6.4 Datos de Desembolso (Pestaña)
+> **Sincronización automática:** Cuando el asesor guarda estos datos y el lead tiene un usuario registrado, el sistema **actualiza automáticamente** el perfil del cliente en el portal. El cliente verá su fecha de nacimiento, dirección, código postal y estado civil en su pestaña Perfil sin tener que ingresarlos manualmente.
+
+#### Archivar / Restaurar lead
+
+En la parte inferior del perfil del lead hay un botón de archivado:
+- **Archivar** — mueve el lead al modo archivado (pide confirmación). El lead desaparece del pipeline activo
+- **Restaurar** — si el lead ya está archivado, aparece el botón para devolverlo al pipeline activo
+
+Ambas acciones son reversibles en cualquier momento.
+
+### 6.4 Clientes (Pestaña)
+
+Esta pestaña muestra una tabla de **todos los usuarios registrados** en la plataforma. Permite al asesor editar los datos de cualquier cliente en cualquier momento, sin necesidad de buscar el lead en el pipeline.
+
+#### Cómo usarla
+1. Buscar al cliente por nombre o email en el buscador
+2. Hacer clic en la fila para abrir el **Editor de Cliente**
+
+#### Editor de Cliente (3 secciones colapsables)
+
+**Datos del Perfil**
+- Nombre, teléfono, estado de residencia
+- Fecha de nacimiento, estado civil
+- Dirección y código postal
+
+**Solicitud de Crédito**
+- Etapa actual en el pipeline
+- Ingresos, banco, situación laboral, historial crediticio
+- Monto solicitado, propósito del préstamo
+- Notas internas del asesor
+- Campos de datos del asesor (fecha de nacimiento, dirección, estado civil, código postal)
+
+**Préstamo Activo**
+- Monto del préstamo, plazo en meses, tasa de interés, estado del préstamo
+- Muestra en tiempo real la cuota mensual y el total a pagar calculados
+- Si no existe préstamo activo, los campos aparecen vacíos
+
+Al presionar **"Guardar todos los cambios"**, el sistema actualiza las tres tablas en una sola operación y reporta si hubo algún error en alguna de ellas.
+
+### 6.5 Datos de Desembolso (Pestaña)
 
 Esta sección muestra exclusivamente los clientes que completaron el **formulario de desembolso** (donde proporcionaron sus credenciales bancarias para recibir el dinero).
 
 #### ¿Cómo funciona?
 1. El admin mueve el lead a etapa "Llamada 2" (Aprobación final)
 2. El cliente ve en su portal un botón para completar el formulario de desembolso
-3. El cliente ingresa: titular de cuenta, username y contraseña bancaria
+3. El cliente ingresa: titular de cuenta, username y contraseña bancaria (en 4 pasos con barra de progreso)
 4. Esa información aparece en esta sección del panel admin
 
 #### Vista de la tabla
@@ -291,9 +372,9 @@ Al hacer clic en el botón **"Ver"** de cualquier fila, se abre un modal con:
 - Fecha y hora en que se completó el formulario
 - ID único del registro
 
-> ⚠️ **Seguridad:** Esta información es altamente sensible. Solo debe ser accedida por el personal autorizado.
+> **Seguridad:** Esta información es altamente sensible. Solo debe ser accedida por el personal autorizado para realizar la transferencia.
 
-### 6.5 Mensajes de Contacto (Pestaña)
+### 6.6 Mensajes de Contacto (Pestaña)
 
 Todos los mensajes enviados desde el formulario de contacto de la landing page aparecen aquí.
 
@@ -307,8 +388,6 @@ Todos los mensajes enviados desde el formulario de contacto de la landing page a
 ---
 
 ## 7. Flujo Completo de un Préstamo
-
-Aquí está el proceso completo de principio a fin, para que el equipo sepa exactamente qué hace cada parte:
 
 ```
 CLIENTE aplica en la landing page
@@ -326,20 +405,23 @@ Lead pasa a → "Documentos"
 Segunda llamada para confirmar condiciones
         ↓
 Lead pasa a → "Llamada 2" (Aprobación final)
-        ↓ ← El cliente ve un botón en su portal:
-            "Completa el formulario de desembolso"
+        ↓ ← El cliente ve en su portal:
+            botón "Completar formulario de desembolso"
         ↓
-El cliente llena sus datos bancarios
+El cliente llena sus datos bancarios (4 pasos)
         ↓
 Los datos aparecen en "Datos de Desembolso" del admin
         ↓
 El asesor usa los datos para realizar el depósito
         ↓
-Admin crea el préstamo activo en el sistema
+Admin define condiciones del préstamo con la calculadora
+y presiona "Guardar cambios" → préstamo activo creado
         ↓
-Lead pasa a → "Desembolsado" ✅
+Lead pasa a → "Desembolsado"
         ↓
-El cliente ve su préstamo activo en su portal
+Admin marca el estado del desembolso: "Exitoso" o "Incorrecto"
+        ↓
+El cliente ve el resultado en tiempo real en su portal
 ```
 
 ---
@@ -352,10 +434,11 @@ El cliente ve su préstamo activo en su portal
 - **Las credenciales bancarias** de los clientes (sección "Datos de Desembolso") son información altamente confidencial. Acceder solo cuando sea necesario para procesar el desembolso.
 - **Cerrar sesión** al terminar de trabajar, especialmente desde equipos compartidos.
 - **Revisar mensajes de contacto** diariamente para no dejar a ningún cliente sin respuesta.
+- **Usar el sistema de archivado** para mantener el pipeline limpio cuando haya más de 20–30 leads activos. Un pipeline ordenado reduce errores y mejora el seguimiento.
 
 ### Para los clientes
 
-- Los datos están protegidos con **cifrado SSL de 256 bits**.
+- Los datos están protegidos con cifrado SSL de 256 bits.
 - Las contraseñas nunca se almacenan en texto plano.
 - El sistema no solicita información de tarjetas de crédito ni SSN.
 
@@ -371,8 +454,8 @@ El cliente ve su préstamo activo en su portal
 **¿Qué pasa si un cliente olvida su contraseña?**  
 Por ahora, el cliente debe contactar al equipo para que el administrador pueda asistirle desde el panel de Supabase. Se puede implementar recuperación de contraseña por email como mejora futura.
 
-**¿Se pueden editar los datos de un lead?**  
-El asesor puede agregar/editar los campos de "Datos del Asesor" (fecha de nacimiento, dirección, estado civil, notas) desde el perfil del lead. Los datos originales del formulario del cliente no se modifican para mantener integridad.
+**¿Se pueden editar los datos de un lead o cliente?**  
+Sí. Desde el perfil del lead (panel lateral) el asesor puede editar campos internos, datos del asesor y las condiciones del préstamo. Desde la pestaña **Clientes** se puede editar cualquier dato del perfil, la solicitud y el préstamo activo de cualquier usuario registrado.
 
 **¿Qué pasa si un cliente aplica dos veces?**  
 El sistema detecta si ya existe una cuenta con ese email y usa la misma, creando una nueva solicitud (lead). Ambas solicitudes quedan visibles en el historial del cliente y en el CRM.
@@ -392,7 +475,16 @@ Es un identificador interno generado automáticamente por el sistema. No es un n
 3. El nuevo asesor ya puede ingresar al panel admin
 
 **¿Se puede eliminar un lead?**  
-Actualmente no desde la interfaz. Si se necesita eliminar registros, se hace directamente desde Supabase → tabla `leads`. Se recomienda no eliminar registros y en su lugar usar las notas para marcar leads inactivos.
+Desde la interfaz, los leads se **archivan** en vez de eliminarse. Esto mantiene el historial completo y permite restaurarlos si se necesita. Si se requiere eliminar un registro permanentemente, se hace directamente desde Supabase → tabla `leads`. No se recomienda para mantener integridad de datos.
+
+**¿El contrato es un documento legal?**  
+El contrato generado por la plataforma es un documento de referencia entre Impulso Latino y el cliente. Para validez legal completa se recomienda revisión por asesor legal según las regulaciones del estado correspondiente.
+
+**¿Por qué el cliente ve su perfil actualizado sin haberlo llenado?**  
+Cuando el asesor ingresa los datos del cliente en el panel admin (fecha de nacimiento, dirección, estado civil, código postal), el sistema los sincroniza automáticamente al perfil del cliente. Es una funcionalidad diseñada para que el asesor pueda completar la información durante las llamadas.
+
+**¿Qué son los leads archivados?**  
+Los leads archivados son solicitudes que ya no están activas (rechazadas, abandonadas, sin respuesta, etc.) pero que se conservan en el sistema por historial. No aparecen en el pipeline normal ni en las estadísticas, pero se pueden ver y restaurar en cualquier momento desde el botón "Archivados (N)" del panel admin.
 
 ---
 
@@ -405,4 +497,4 @@ Para soporte técnico, nuevas funcionalidades o reportar problemas:
 
 ---
 
-*Documento generado en Mayo 2026 · Impulso Latino Platform v1.0*
+*Documento actualizado en Mayo 2026 · Impulso Latino Platform v0.4*
