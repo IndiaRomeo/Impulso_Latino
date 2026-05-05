@@ -112,7 +112,7 @@ export default function DisbursementFormModal({ lead, user, onClose, onCompleted
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl">
           <div>
-            <h3 className="text-xl font-black text-primary">Formulario para Desembolso</h3>
+            <h3 className="text-xl font-black text-primary">Desembolso Crédito</h3>
             <p className="text-sm text-gray-400">Paso {currentStep} de 4</p>
           </div>
           <button onClick={onClose} className="p-2 rounded-xl text-gray-400 hover:bg-gray-100 hover:text-gray-600">
