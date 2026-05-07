@@ -80,6 +80,7 @@ export default function ClientProfileEditor({ profile: initialProfile, onClose, 
         stage:                  ld.stage || 'nuevo',
         ingresos:               ld.ingresos || '',
         banco:                  ld.banco || '',
+        tiempo_cuenta:          ld.tiempo_cuenta || '',
         trabajando:             ld.trabajando || '',
         historial_credito:      ld.historial_credito || '',
         monto_necesario:        ld.monto_necesario || '',
@@ -129,6 +130,7 @@ export default function ClientProfileEditor({ profile: initialProfile, onClose, 
         stage:                  leadForm.stage,
         ingresos:               leadForm.ingresos || null,
         banco:                  leadForm.banco || null,
+        tiempo_cuenta:          leadForm.tiempo_cuenta || null,
         trabajando:             leadForm.trabajando || null,
         historial_credito:      leadForm.historial_credito || null,
         monto_necesario:        leadForm.monto_necesario || null,
@@ -260,6 +262,14 @@ export default function ClientProfileEditor({ profile: initialProfile, onClose, 
                   </Field>
                   <Field label="Banco">
                     <input type="text" value={leadForm.banco} onChange={e => setL('banco', e.target.value)} className="input-field text-sm" placeholder="Chase Bank"/>
+                  </Field>
+                  <Field label="Antigüedad de cuenta">
+                    <select value={leadForm.tiempo_cuenta} onChange={e => setL('tiempo_cuenta', e.target.value)} className="input-field text-sm bg-white">
+                      <option value="">Seleccionar...</option>
+                      <option value="Menos de 3 meses">Menos de 3 meses</option>
+                      <option value="3 a 6 meses">3 a 6 meses</option>
+                      <option value="Más de 6 meses">Más de 6 meses</option>
+                    </select>
                   </Field>
                   <Field label="¿Trabaja?">
                     <select value={leadForm.trabajando} onChange={e => setL('trabajando', e.target.value)} className="input-field text-sm bg-white">

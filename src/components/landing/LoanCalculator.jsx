@@ -10,7 +10,8 @@ export default function LoanCalculator() {
   const { user } = useAuth()
 
   const rate = RATES[term]
-  const totalInterest = amount * rate
+  const years = term / 12
+  const totalInterest = amount * rate * years
   const monthly = ((amount + totalInterest) / term).toFixed(2)
   const total = (amount + totalInterest).toFixed(2)
 

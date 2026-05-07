@@ -15,7 +15,7 @@ function OptionCard({ label, value, selected, onClick }) {
 }
 
 export default function Step3({ data, update, onNext, onBack }) {
-  const valid = data.cuentaActiva && data.ingresosEnCuenta && data.banco && data.tiempoCuenta && data.historialCredito
+  const valid = data.cuentaActiva && data.historialCredito && (data.cuentaActiva === 'No' || (data.ingresosEnCuenta && data.banco && data.tiempoCuenta))
 
   return (
     <div>
