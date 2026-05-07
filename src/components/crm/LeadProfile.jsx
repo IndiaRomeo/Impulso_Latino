@@ -212,6 +212,7 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
                 <InfoRow icon={MapPin}     label="Estado"            value={lead.estado_residencia}/>
                 <InfoRow icon={DollarSign} label="Ingresos"          value={lead.ingresos}/>
                 <InfoRow icon={Building2}  label="Banco"             value={lead.banco}/>
+                <InfoRow icon={Calculator} label="Antigüedad de cuenta" value={lead.tiempo_cuenta}/>
                 <InfoRow icon={CreditCard} label="Historial crédito" value={lead.historial_credito}/>
                 <InfoRow icon={DollarSign} label="Monto solicitado"  value={lead.monto_necesario}/>
                 <InfoRow icon={FileText}   label="Trabaja"           value={lead.trabajando}/>
