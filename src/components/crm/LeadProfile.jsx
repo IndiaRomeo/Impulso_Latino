@@ -337,7 +337,7 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
 
             {/* Extra admin fields */}
             <div>
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Datos del Asesor</h3>
+              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Datos del Cliente</h3>
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
