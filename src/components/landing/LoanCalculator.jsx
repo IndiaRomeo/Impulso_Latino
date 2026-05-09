@@ -2,16 +2,18 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 
-const RATES = { 12: 0.04, 24: 0.05, 36: 0.06 }
+const DISPLAY_RATES = { 12: 0.04, 24: 0.05, 36: 0.06 }
+const CALC_RATES = { 12: 0.04, 24: 0.10, 36: 0.18 }
 
 export default function LoanCalculator() {
   const [amount, setAmount] = useState(3000)
   const [term, setTerm] = useState(12)
   const { user } = useAuth()
 
-  const rate = RATES[term]
+  const displayRate = DISPLAY_RATES[term]
+  const calcRate = CALC_RATES[term]
   const years = term / 12
-  const totalInterest = amount * rate * years
+  const totalInterest = amount * calcRate * years
   const monthly = ((amount + totalInterest) / term).toFixed(2)
   const total = (amount + totalInterest).toFixed(2)
 
@@ -68,7 +70,7 @@ export default function LoanCalculator() {
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-blue-200">Tasa de interes</span>
-          <span className="text-white font-semibold">{rate * 100}% anual</span>
+          <span className="text-white font-semibold">{displayRate * 100}% anual</span>
         </div>
       </div>
 
