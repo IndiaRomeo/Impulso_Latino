@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { X, Save, User, Phone, MapPin, Calendar, Mail, CreditCard, Shield, FileText, DollarSign, Building2, ChevronDown, ChevronUp } from 'lucide-react'
+import { X, Save, User, Phone, MapPin, Calendar, Mail, CreditCard, Shield, FileText, DollarSign, Building2, ChevronDown, ChevronUp, KeyRound, Send } from 'lucide-react'
 import { supabase } from '../../lib/supabase.js'
 
 const PIPELINE_STAGES = [
@@ -60,6 +60,7 @@ export default function ClientProfileEditor({ profile: initialProfile, onClose, 
   const [saving, setSaving]     = useState(false)
   const [error, setError]       = useState('')
   const [success, setSuccess]   = useState('')
+  const [resetStatus, setResetStatus] = useState('idle') // idle | sending | sent | error
 
   const setP = (f, v) => setProfileForm(p => ({ ...p, [f]: v }))
   const setL = (f, v) => setLeadForm(p => ({ ...p, [f]: v }))
@@ -103,6 +104,17 @@ export default function ClientProfileEditor({ profile: initialProfile, onClose, 
       })
     }
     setLoading(false)
+  }
+
+  async function handleSendReset() {
+    if (!window.confirm(`¿Enviar enlace de recuperación de contraseña a ${initialProfile.email}?`)) return
+    setResetStatus('sending')
+    const { error: err } = await supabase.auth.resetPasswordForEmail(
+      initialProfile.email,
+      { redirectTo: `${window.location.origin}/reset-password` }
+    )
+    setResetStatus(err ? 'error' : 'sent')
+    setTimeout(() => setResetStatus('idle'), 4000)
   }
 
   async function handleSave(e) {
@@ -208,6 +220,31 @@ export default function ClientProfileEditor({ profile: initialProfile, onClose, 
                 </div>
               </div>
             </div>
+            {/* Password reset button for admin */}
+            {!initialProfile.is_admin && (
+              <div className="flex items-center justify-between bg-orange-50 border border-orange-200 rounded-xl px-4 py-2.5">
+                <div className="flex items-center gap-2">
+                  <KeyRound size={14} className="text-orange-500"/>
+                  <p className="text-sm text-orange-700">Recuperación de contraseña</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSendReset}
+                  disabled={resetStatus === 'sending'}
+                  className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white"
+                >
+                  {resetStatus === 'sending' ? (
+                    <><span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Enviando...</>
+                  ) : resetStatus === 'sent' ? (
+                    '✓ Enviado'
+                  ) : resetStatus === 'error' ? (
+                    'Error — reintentar'
+                  ) : (
+                    <><Send size={12}/> Enviar enlace</>
+                  )}
+                </button>
+              </div>
+            )}
             {initialProfile.is_admin && (
               <div className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-xl px-4 py-2.5">
                 <Shield size={14} className="text-purple-600"/>

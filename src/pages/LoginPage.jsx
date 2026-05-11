@@ -77,7 +77,12 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label className="label"><Lock size={13} className="inline mr-1" />Contrasena</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="label mb-0"><Lock size={13} className="inline mr-1" />Contrasena</label>
+                  <Link to="/forgot-password" className="text-xs text-secondary hover:text-primary transition-colors font-medium">
+                    ¿Olvidaste tu contraseña?
+                  </Link>
+                </div>
                 <input
                   type="password"
                   placeholder="Tu contrasena"
