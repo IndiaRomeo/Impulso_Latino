@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, ArrowLeft, KeyRound } from 'lucide-react'
-import { supabase } from '../lib/supabase.js'
 import Logo from '../components/Logo.jsx'
 
 export default function ForgotPasswordPage() {
@@ -15,16 +14,17 @@ export default function ForgotPasswordPage() {
     setStatus('sending')
     setError('')
 
-    const { error: err } = await supabase.auth.resetPasswordForEmail(
-      email.trim().toLowerCase(),
-      { redirectTo: `${window.location.origin}/reset-password` }
-    )
-
-    if (err) {
-      setError('No se pudo enviar el correo. Intenta nuevamente.')
-      setStatus('error')
-    } else {
+    try {
+      const res = await fetch('/api/send-reset-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      })
+      if (!res.ok) throw new Error()
       setStatus('sent')
+    } catch {
+      setError('No se pudo enviar el correo. Verifica que el email esté registrado e intenta nuevamente.')
+      setStatus('error')
     }
   }
 

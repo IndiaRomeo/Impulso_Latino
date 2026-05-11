@@ -109,11 +109,16 @@ export default function ClientProfileEditor({ profile: initialProfile, onClose, 
   async function handleSendReset() {
     if (!window.confirm(`¿Enviar enlace de recuperación de contraseña a ${initialProfile.email}?`)) return
     setResetStatus('sending')
-    const { error: err } = await supabase.auth.resetPasswordForEmail(
-      initialProfile.email,
-      { redirectTo: `${window.location.origin}/reset-password` }
-    )
-    setResetStatus(err ? 'error' : 'sent')
+    try {
+      const res = await fetch('/api/send-reset-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: initialProfile.email }),
+      })
+      setResetStatus(res.ok ? 'sent' : 'error')
+    } catch {
+      setResetStatus('error')
+    }
     setTimeout(() => setResetStatus('idle'), 4000)
   }
 
