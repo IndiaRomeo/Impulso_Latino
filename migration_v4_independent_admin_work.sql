@@ -22,10 +22,18 @@ CREATE TABLE IF NOT EXISTS public.lead_admin_states (
   historial_credito text,
   monto_necesario text,
   proposito text,
+  loan_amount numeric(10,2),
+  loan_term_months integer,
+  loan_rate_pct numeric(5,2),
   created_at timestamptz default now(),
   updated_at timestamptz default now(),
   unique (lead_id, admin_id)
 );
+
+ALTER TABLE public.lead_admin_states
+  ADD COLUMN IF NOT EXISTS loan_amount numeric(10,2),
+  ADD COLUMN IF NOT EXISTS loan_term_months integer,
+  ADD COLUMN IF NOT EXISTS loan_rate_pct numeric(5,2);
 
 ALTER TABLE public.loans
   ADD COLUMN IF NOT EXISTS created_by_admin_id uuid references public.profiles(id) on delete set null;
@@ -88,5 +96,5 @@ WITH CHECK (
 
 -- Existing loans have created_by_admin_id = NULL, so admins can still see legacy loans.
 -- New loans created from the app will be stamped with the admin id and will only
--- appear for that admin in the admin panel.
+-- appear for that admin in the admin panel. Clients still see their own loans.
 -- ============================================================

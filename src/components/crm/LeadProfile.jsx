@@ -41,9 +41,9 @@ export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
     notas:                  lead.notas || '',
   })
   const [stage, setStage]                 = useState(lead.stage || 'nuevo')
-  const [calcAmount, setCalcAmount]       = useState(AMOUNT_MID[lead.monto_necesario] || 3500)
-  const [calcTerm, setCalcTerm]           = useState(12)
-  const [calcRate, setCalcRate]           = useState(4)   // percentage
+  const [calcAmount, setCalcAmount]       = useState(Number(lead.loan_amount) || AMOUNT_MID[lead.monto_necesario] || 3500)
+  const [calcTerm, setCalcTerm]           = useState(Number(lead.loan_term_months) || 12)
+  const [calcRate, setCalcRate]           = useState(Number(lead.loan_rate_pct) || 4)   // percentage
   const [saving, setSaving]               = useState(false)
   const [creatingLoan, setCreatingLoan]   = useState(false)
   const [loanMessage, setLoanMessage]     = useState('')
@@ -87,24 +87,80 @@ export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
     setCalcRate(PRESET_RATES[term] ?? 4)
   }
 
+  async function persistLoan() {
+    if (!lead.user_id) throw new Error('Este lead no tiene usuario vinculado.')
+
+    const start = new Date()
+    const due = new Date(start)
+    due.setMonth(due.getMonth() + calcTerm)
+
+    const newTotal = calcAmount * (1 + rateDecimal)
+    const newMonthly = calcTerm > 0 ? newTotal / calcTerm : 0
+    const payload = {
+      user_id:             lead.user_id,
+      lead_id:             lead.id,
+      created_by_admin_id: currentAdmin?.id || null,
+      monto:               Number(Number(calcAmount).toFixed(2)),
+      plazo_meses:         calcTerm,
+      tasa_interes:        rateDecimal,
+      cuota_mensual:       Number(newMonthly.toFixed(2)),
+      total_pagar:         Number(newTotal.toFixed(2)),
+      saldo_pendiente:     Number(newTotal.toFixed(2)),
+      estado:              'activo',
+      fecha_inicio:        start.toISOString().slice(0, 10),
+      fecha_vencimiento:   due.toISOString().slice(0, 10),
+    }
+
+    if (existingLoan) {
+      const { data, error } = await supabase
+        .from('loans')
+        .update({
+          monto:           payload.monto,
+          plazo_meses:     payload.plazo_meses,
+          tasa_interes:    payload.tasa_interes,
+          cuota_mensual:   payload.cuota_mensual,
+          total_pagar:     payload.total_pagar,
+          saldo_pendiente: payload.saldo_pendiente,
+          estado:          payload.estado,
+        })
+        .eq('id', existingLoan.id)
+        .select()
+        .single()
+      if (error) throw error
+      setExistingLoan(data)
+      return data
+    }
+
+    const { data, error } = await supabase
+      .from('loans')
+      .insert({
+        ...payload,
+        numero_prestamo: `IL-${Date.now().toString().slice(-8)}`,
+      })
+      .select()
+      .single()
+    if (error) throw error
+    setExistingLoan(data)
+    setLoanInit(true)
+    return data
+  }
+
   async function save() {
     setSaving(true)
     setSaveError('')
     try {
-      await onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado })
+      await onUpdate({
+        ...lead,
+        ...extra,
+        stage,
+        desembolso_estado: desembolsoEstado,
+        loan_amount: Number(calcAmount),
+        loan_term_months: Number(calcTerm),
+        loan_rate_pct: Number(calcRate),
+      })
 
       if (existingLoan) {
-        const newTotal   = calcAmount * (1 + rateDecimal)
-        const newMonthly = calcTerm > 0 ? newTotal / calcTerm : 0
-        const { error } = await supabase.from('loans').update({
-          monto:           Number(Number(calcAmount).toFixed(2)),
-          plazo_meses:     calcTerm,
-          tasa_interes:    rateDecimal,
-          cuota_mensual:   Number(newMonthly.toFixed(2)),
-          total_pagar:     Number(newTotal.toFixed(2)),
-          saldo_pendiente: Number(newTotal.toFixed(2)),
-        }).eq('id', existingLoan.id)
-        if (error) throw error
+        await persistLoan()
       }
 
       onClose()
@@ -118,47 +174,26 @@ export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
 
   async function createLoan() {
     setLoanMessage('')
-    if (!lead.user_id) { setLoanMessage('Este lead no tiene usuario vinculado.'); return }
     setCreatingLoan(true)
-    const start = new Date()
-    const due   = new Date(start)
-    due.setMonth(due.getMonth() + calcTerm)
-
-    const { data: existing } = await supabase
-      .from('loans')
-      .select('id')
-      .eq('lead_id', lead.id)
-      .eq('created_by_admin_id', currentAdmin?.id)
-      .maybeSingle()
-    if (existing) { setCreatingLoan(false); setLoanMessage('Este lead ya tiene un prestamo creado.'); return }
-
-    const newTotal   = calcAmount * (1 + rateDecimal)
-    const newMonthly = calcTerm > 0 ? newTotal / calcTerm : 0
-
-    const { data: newLoan, error: loanErr } = await supabase.from('loans').insert({
-      user_id:           lead.user_id,
-      lead_id:           lead.id,
-      created_by_admin_id: currentAdmin?.id || null,
-      numero_prestamo:   `IL-${Date.now().toString().slice(-8)}`,
-      monto:             Number(Number(calcAmount).toFixed(2)),
-      plazo_meses:       calcTerm,
-      tasa_interes:      rateDecimal,
-      cuota_mensual:     Number(newMonthly.toFixed(2)),
-      total_pagar:       Number(newTotal.toFixed(2)),
-      saldo_pendiente:   Number(newTotal.toFixed(2)),
-      estado:            'activo',
-      fecha_inicio:      start.toISOString().slice(0, 10),
-      fecha_vencimiento: due.toISOString().slice(0, 10),
-    }).select().single()
-
-    if (loanErr) { setCreatingLoan(false); setLoanMessage(loanErr.message || 'No se pudo crear el prestamo.'); return }
-
-    setExistingLoan(newLoan)
-    setLoanInit(true)
-    await onUpdate({ ...lead, ...extra, stage: 'desembolsado', desembolso_estado: desembolsoEstado })
-    setStage('desembolsado')
-    setCreatingLoan(false)
-    setLoanMessage('Prestamo creado correctamente.')
+    try {
+      await persistLoan()
+      await onUpdate({
+        ...lead,
+        ...extra,
+        stage: 'desembolsado',
+        desembolso_estado: desembolsoEstado,
+        loan_amount: Number(calcAmount),
+        loan_term_months: Number(calcTerm),
+        loan_rate_pct: Number(calcRate),
+      })
+      setStage('desembolsado')
+      setLoanMessage('Prestamo guardado correctamente.')
+    } catch (err) {
+      console.error('Loan create error:', err)
+      setLoanMessage(err.message || 'No se pudo guardar el prestamo.')
+    } finally {
+      setCreatingLoan(false)
+    }
   }
 
   async function handleArchive() {
@@ -166,7 +201,16 @@ export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
     const newArchived = !lead.archived
     setSaveError('')
     try {
-      await onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado, archived: newArchived })
+      await onUpdate({
+        ...lead,
+        ...extra,
+        stage,
+        desembolso_estado: desembolsoEstado,
+        archived: newArchived,
+        loan_amount: Number(calcAmount),
+        loan_term_months: Number(calcTerm),
+        loan_rate_pct: Number(calcRate),
+      })
       setArchiveConfirm(false)
       onClose()
     } catch (err) {
@@ -181,7 +225,15 @@ export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
     setSettingStatus(true)
     setSaveError('')
     try {
-      await onUpdate({ ...lead, ...extra, stage, desembolso_estado: status })
+      await onUpdate({
+        ...lead,
+        ...extra,
+        stage,
+        desembolso_estado: status,
+        loan_amount: Number(calcAmount),
+        loan_term_months: Number(calcTerm),
+        loan_rate_pct: Number(calcRate),
+      })
       setDesembolsoEstado(status)
     } catch (err) {
       console.error('Disbursement status error:', err)
@@ -259,6 +311,7 @@ export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
             <div>
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2"><Calculator size={13}/>Calculadora de Tasas</h3>
               {existingLoan && <p className="text-xs text-blue-600 mb-3 bg-blue-50 rounded-lg px-3 py-2">Editando préstamo activo · Al guardar cambios se actualizará para el cliente.</p>}
+              {!existingLoan && <p className="text-xs text-blue-600 mb-3 bg-blue-50 rounded-lg px-3 py-2">Al guardar cambios se guardan estos valores en el lead. El préstamo real solo se crea con "Crear prestamo".</p>}
               <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-3">
                 {/* Amount */}
                 <div>

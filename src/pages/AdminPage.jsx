@@ -33,6 +33,9 @@ const ADMIN_STATE_FIELDS = [
   'historial_credito',
   'monto_necesario',
   'proposito',
+  'loan_amount',
+  'loan_term_months',
+  'loan_rate_pct',
 ]
 
 function mergeLeadWithAdminState(lead, state) {
@@ -111,6 +114,9 @@ export default function AdminPage() {
       codigo_postal_admin:     updated.codigo_postal_admin || null,
       estado_civil_admin:      updated.estado_civil_admin || null,
       desembolso_estado:       updated.desembolso_estado || null,
+      loan_amount:             updated.loan_amount ? Number(Number(updated.loan_amount).toFixed(2)) : null,
+      loan_term_months:        updated.loan_term_months ? Number(updated.loan_term_months) : null,
+      loan_rate_pct:           updated.loan_rate_pct !== undefined && updated.loan_rate_pct !== null ? Number(updated.loan_rate_pct) : null,
       archived:                updated.archived === true,
       updated_at:              new Date().toISOString(),
     }, { onConflict: 'lead_id,admin_id' })
