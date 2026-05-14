@@ -147,6 +147,7 @@ export default function AdminPage() {
   })
 
   const filteredProfiles = profiles.filter(p => {
+    if (p.is_admin === true) return false
     const s = clientSearch.toLowerCase()
     return p.nombre?.toLowerCase().includes(s) || p.email?.toLowerCase().includes(s) || p.numero_cuenta?.toLowerCase().includes(s)
   })

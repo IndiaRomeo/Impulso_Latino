@@ -16,6 +16,10 @@ const initialData = {
   montoNecesario: '', proposito: '',
 }
 
+function generateAccountNumber() {
+  return `IL${crypto.randomUUID().replace(/-/g, '').slice(0, 10).toUpperCase()}`
+}
+
 function getSubmitErrorMessage(err) {
   const message = err?.message || ''
   const normalized = message.toLowerCase()
@@ -85,11 +89,29 @@ export default function MultiStepForm() {
         throw new Error('No se pudo crear la cuenta. Revisa la configuracion de Auth en Supabase.')
       }
 
-      const { error: profileErr } = await supabase.from('profiles').update({
+      const { data: existingProfile, error: profileLookupErr } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', authUser.id)
+        .maybeSingle()
+
+      if (profileLookupErr) throw profileLookupErr
+
+      const profilePayload = {
+        email,
         nombre: data.nombre,
         telefono: data.telefono,
         estado_residencia: data.estado,
-      }).eq('id', authUser.id)
+      }
+
+      const { error: profileErr } = existingProfile
+        ? await supabase.from('profiles').update(profilePayload).eq('id', authUser.id)
+        : await supabase.from('profiles').insert({
+            id: authUser.id,
+            ...profilePayload,
+            numero_cuenta: generateAccountNumber(),
+            is_admin: false,
+          })
 
       if (profileErr) throw profileErr
 

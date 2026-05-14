@@ -42,6 +42,29 @@ CREATE INDEX IF NOT EXISTS idx_lead_admin_states_admin ON public.lead_admin_stat
 CREATE INDEX IF NOT EXISTS idx_lead_admin_states_lead ON public.lead_admin_states(lead_id);
 CREATE INDEX IF NOT EXISTS idx_loans_created_by_admin ON public.loans(created_by_admin_id);
 
+DROP POLICY IF EXISTS "Users insert own profile" ON public.profiles;
+CREATE POLICY "Users insert own profile"
+ON public.profiles
+FOR INSERT
+WITH CHECK (auth.uid() = id);
+
+-- Repair profiles for customers who already have leads but no profile row.
+INSERT INTO public.profiles (id, email, nombre, telefono, estado_residencia, numero_cuenta, is_admin)
+SELECT DISTINCT ON (l.user_id)
+  l.user_id,
+  l.email,
+  l.nombre,
+  l.telefono,
+  l.estado_residencia,
+  'IL' || upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 10)),
+  false
+FROM public.leads l
+LEFT JOIN public.profiles p ON p.id = l.user_id
+WHERE l.user_id IS NOT NULL
+  AND p.id IS NULL
+ORDER BY l.user_id, l.created_at DESC
+ON CONFLICT (id) DO NOTHING;
+
 ALTER TABLE public.lead_admin_states ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Admins manage own lead states" ON public.lead_admin_states;
