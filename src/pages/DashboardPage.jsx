@@ -82,7 +82,19 @@ export default function DashboardPage() {
       supabase.from('leads').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
       supabase.from('loans').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
     ])
-    setLeads(l || [])
+    const { data: publicStatuses, error: statusError } = await supabase.rpc('get_my_lead_public_statuses')
+    if (statusError) console.error('Lead public status load error:', statusError)
+    const statusesByLead = new Map((publicStatuses || []).map(status => [status.lead_id, status]))
+    setLeads((l || []).map(lead => {
+      const status = statusesByLead.get(lead.id)
+      return status
+        ? {
+            ...lead,
+            stage: status.stage || lead.stage,
+            desembolso_estado: status.desembolso_estado ?? lead.desembolso_estado,
+          }
+        : lead
+    }))
     setLoans(ln || [])
     setLoading(false)
   }

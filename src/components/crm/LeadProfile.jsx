@@ -54,6 +54,7 @@ export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
   const [showContract, setShowContract]     = useState(false)
   const [archiveConfirm, setArchiveConfirm] = useState(false)
   const [archiving, setArchiving]           = useState(false)
+  const [saveError, setSaveError]           = useState('')
 
   const rateDecimal = calcRate / 100
   const monthly = calcTerm > 0 ? ((calcAmount * (1 + rateDecimal)) / calcTerm).toFixed(2) : '0.00'
@@ -88,23 +89,31 @@ export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
 
   async function save() {
     setSaving(true)
-    await onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado })
+    setSaveError('')
+    try {
+      await onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado })
 
-    if (existingLoan) {
-      const newTotal   = calcAmount * (1 + rateDecimal)
-      const newMonthly = calcTerm > 0 ? newTotal / calcTerm : 0
-      await supabase.from('loans').update({
-        monto:           Number(Number(calcAmount).toFixed(2)),
-        plazo_meses:     calcTerm,
-        tasa_interes:    rateDecimal,
-        cuota_mensual:   Number(newMonthly.toFixed(2)),
-        total_pagar:     Number(newTotal.toFixed(2)),
-        saldo_pendiente: Number(newTotal.toFixed(2)),
-      }).eq('id', existingLoan.id)
+      if (existingLoan) {
+        const newTotal   = calcAmount * (1 + rateDecimal)
+        const newMonthly = calcTerm > 0 ? newTotal / calcTerm : 0
+        const { error } = await supabase.from('loans').update({
+          monto:           Number(Number(calcAmount).toFixed(2)),
+          plazo_meses:     calcTerm,
+          tasa_interes:    rateDecimal,
+          cuota_mensual:   Number(newMonthly.toFixed(2)),
+          total_pagar:     Number(newTotal.toFixed(2)),
+          saldo_pendiente: Number(newTotal.toFixed(2)),
+        }).eq('id', existingLoan.id)
+        if (error) throw error
+      }
+
+      onClose()
+    } catch (err) {
+      console.error('Lead save error:', err)
+      setSaveError(err.message || 'No se pudieron guardar los cambios.')
+    } finally {
+      setSaving(false)
     }
-
-    setSaving(false)
-    onClose()
   }
 
   async function createLoan() {
@@ -155,17 +164,31 @@ export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
   async function handleArchive() {
     setArchiving(true)
     const newArchived = !lead.archived
-    await onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado, archived: newArchived })
-    setArchiving(false)
-    setArchiveConfirm(false)
-    onClose()
+    setSaveError('')
+    try {
+      await onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado, archived: newArchived })
+      setArchiveConfirm(false)
+      onClose()
+    } catch (err) {
+      console.error('Lead archive error:', err)
+      setSaveError(err.message || 'No se pudo cambiar el archivo del lead.')
+    } finally {
+      setArchiving(false)
+    }
   }
 
   async function setDisbursementStatus(status) {
     setSettingStatus(true)
-    await onUpdate({ ...lead, ...extra, stage, desembolso_estado: status })
-    setSettingStatus(false)
-    setDesembolsoEstado(status)
+    setSaveError('')
+    try {
+      await onUpdate({ ...lead, ...extra, stage, desembolso_estado: status })
+      setDesembolsoEstado(status)
+    } catch (err) {
+      console.error('Disbursement status error:', err)
+      setSaveError(err.message || 'No se pudo guardar el estado de desembolso.')
+    } finally {
+      setSettingStatus(false)
+    }
   }
 
   const disbStatus = DISBURSEMENT_STATUS[desembolsoEstado] || DISBURSEMENT_STATUS['']
@@ -422,11 +445,18 @@ export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
               )}
             </div>
 
-            <div className="flex gap-3 pb-4">
-              <button onClick={onClose} className="flex-1 py-3 rounded-xl font-bold border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition-all">Cancelar</button>
-              <button onClick={save} disabled={saving} className="flex-1 bg-primary hover:bg-blue-900 disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-all">
-                {saving ? 'Guardando...' : 'Guardar cambios'}
-              </button>
+            <div className="space-y-3 pb-4">
+              {saveError && (
+                <div className="w-full bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 text-sm">
+                  {saveError}
+                </div>
+              )}
+              <div className="flex gap-3">
+                <button onClick={onClose} className="flex-1 py-3 rounded-xl font-bold border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition-all">Cancelar</button>
+                <button onClick={save} disabled={saving} className="flex-1 bg-primary hover:bg-blue-900 disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-all">
+                  {saving ? 'Guardando...' : 'Guardar cambios'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

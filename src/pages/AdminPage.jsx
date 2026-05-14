@@ -17,6 +17,37 @@ const PIPELINE_STAGES = [
   { id: 'desembolsado', label: 'Dinero enviado',        color: 'bg-green-100 text-green-800',  dot: 'bg-green-500' },
 ]
 
+const ADMIN_STATE_FIELDS = [
+  'stage',
+  'notas',
+  'archived',
+  'fecha_nacimiento_admin',
+  'direccion_admin',
+  'codigo_postal_admin',
+  'estado_civil_admin',
+  'desembolso_estado',
+  'ingresos',
+  'banco',
+  'tiempo_cuenta',
+  'trabajando',
+  'historial_credito',
+  'monto_necesario',
+  'proposito',
+]
+
+function mergeLeadWithAdminState(lead, state) {
+  if (!state) return lead
+  const overrides = {}
+  ADMIN_STATE_FIELDS.forEach(field => {
+    if (state[field] !== null && state[field] !== undefined) overrides[field] = state[field]
+  })
+  return {
+    ...lead,
+    ...overrides,
+    lead_admin_state_id: state.id,
+  }
+}
+
 export default function AdminPage() {
   const { signOut, user, profile, isAdmin } = useAuth()
   const [leads, setLeads]             = useState([])
@@ -55,18 +86,7 @@ export default function AdminPage() {
     }
 
     const statesByLead = new Map((s || []).map(state => [state.lead_id, state]))
-    setLeads((l || []).map(lead => {
-      const state = statesByLead.get(lead.id)
-      return state
-        ? {
-            ...lead,
-            ...Object.fromEntries(Object.entries(state).filter(([, value]) => value !== null && value !== undefined)),
-            id: lead.id,
-            lead_admin_state_id: state.id,
-            lead_id: lead.id,
-          }
-        : lead
-    }))
+    setLeads((l || []).map(lead => mergeLeadWithAdminState(lead, statesByLead.get(lead.id))))
     setMessages(m || [])
     setProfiles(p || [])
     setLoading(false)
@@ -81,7 +101,7 @@ export default function AdminPage() {
   }
 
   async function updateLead(updated) {
-    await supabase.from('lead_admin_states').upsert({
+    const { error } = await supabase.from('lead_admin_states').upsert({
       lead_id:                 updated.id,
       admin_id:                user.id,
       stage:                   updated.stage,
@@ -94,6 +114,7 @@ export default function AdminPage() {
       archived:                updated.archived === true,
       updated_at:              new Date().toISOString(),
     }, { onConflict: 'lead_id,admin_id' })
+    if (error) throw error
 
     setLeads(prev => prev.map(l => l.id === updated.id ? { ...l, ...updated } : l))
   }

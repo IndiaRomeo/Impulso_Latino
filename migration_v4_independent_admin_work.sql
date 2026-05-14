@@ -43,6 +43,32 @@ FOR ALL
 USING (public.is_admin() AND admin_id = auth.uid())
 WITH CHECK (public.is_admin() AND admin_id = auth.uid());
 
+CREATE OR REPLACE FUNCTION public.get_my_lead_public_statuses()
+RETURNS TABLE (
+  lead_id uuid,
+  stage text,
+  desembolso_estado text,
+  updated_at timestamptz
+)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT DISTINCT ON (s.lead_id)
+    s.lead_id,
+    COALESCE(s.stage, l.stage) AS stage,
+    s.desembolso_estado,
+    s.updated_at
+  FROM public.lead_admin_states s
+  JOIN public.leads l ON l.id = s.lead_id
+  WHERE l.user_id = auth.uid()
+     OR l.email = (auth.jwt() ->> 'email')
+  ORDER BY s.lead_id, s.updated_at DESC;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.get_my_lead_public_statuses() TO authenticated;
+
 -- Optional stricter loan privacy for admins:
 -- Admins can only see/manage loans they created. Clients still see their own loans
 -- through the existing "Users view own loans" policy.
