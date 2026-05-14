@@ -85,7 +85,7 @@ export default function DashboardPage() {
     const { data: publicStatuses, error: statusError } = await supabase.rpc('get_my_lead_public_statuses')
     if (statusError) console.error('Lead public status load error:', statusError)
     const statusesByLead = new Map((publicStatuses || []).map(status => [status.lead_id, status]))
-    setLeads((l || []).map(lead => {
+    const mergedLeads = (l || []).map(lead => {
       const status = statusesByLead.get(lead.id)
       return status
         ? {
@@ -94,7 +94,12 @@ export default function DashboardPage() {
             desembolso_estado: status.desembolso_estado ?? lead.desembolso_estado,
           }
         : lead
-    }))
+    })
+    setLeads(mergedLeads)
+    if (!profile?.nombre && mergedLeads[0]?.nombre) {
+      await supabase.from('profiles').update({ nombre: mergedLeads[0].nombre }).eq('id', user.id)
+      await refetchProfile()
+    }
     setLoans(ln || [])
     setLoading(false)
   }
@@ -153,6 +158,7 @@ export default function DashboardPage() {
 
   const activeLoan = loans.find(l => l.estado === 'activo')
   const latestLead = leads[0]
+  const displayName = profile?.nombre || latestLead?.nombre || user?.email?.split('@')[0] || 'Cliente'
 
   if (loading) {
     return (
@@ -174,11 +180,11 @@ export default function DashboardPage() {
           </Link>
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <p className="text-white font-semibold text-sm">{profile?.nombre || user?.email}</p>
+              <p className="text-white font-semibold text-sm">{displayName}</p>
               <p className="text-blue-300 text-xs">Mi cuenta</p>
             </div>
             <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center text-white font-black text-sm">
-              {(profile?.nombre || user?.email || 'U')[0].toUpperCase()}
+              {(displayName || 'U')[0].toUpperCase()}
             </div>
             <button onClick={signOut} className="text-blue-300 hover:text-white transition-colors p-1">
               <LogOut size={18} />
@@ -214,7 +220,7 @@ export default function DashboardPage() {
           <div className="space-y-6">
             <div className="animate-fade-up">
               <h1 className="text-2xl font-black text-primary">
-                Hola, {(profile?.nombre || user?.email?.split('@')[0] || 'Cliente').split(' ')[0]}
+                Hola, {displayName.split(' ')[0]}
               </h1>
               <p className="text-gray-500 mt-1">Aqui tienes un resumen de tu cuenta con Impulso Latino.</p>
             </div>
@@ -300,7 +306,7 @@ export default function DashboardPage() {
               <p className="text-gray-500 text-sm">Tu tarjeta de credito Impulso Latino</p>
             </div>
             <div className="flex justify-center animate-fade-up delay-100">
-              <ProfileCard profile={profile} loan={activeLoan} />
+              <ProfileCard profile={profile} loan={activeLoan} holderName={displayName} />
             </div>
             {activeLoan ? (
               <div className="animate-fade-up delay-200 space-y-3">
@@ -421,10 +427,10 @@ export default function DashboardPage() {
             <div className="card">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg">
-                  {(profile?.nombre || user?.email || 'U')[0].toUpperCase()}
+                  {(displayName || 'U')[0].toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-black text-primary text-xl">{profile?.nombre || '-'}</p>
+                  <p className="font-black text-primary text-xl">{displayName}</p>
                   <p className="text-gray-400 text-sm">{user?.email}</p>
                   <span className="badge bg-green-100 text-green-700 mt-1">Cuenta activa</span>
                 </div>
@@ -535,7 +541,7 @@ export default function DashboardPage() {
 
       {contractLoan && (
         <ContractModal
-          clientName={profile?.nombre || user?.email || 'Cliente'}
+          clientName={displayName}
           clientEmail={user?.email}
           loan={contractLoan}
           onClose={() => setContractLoan(null)}

@@ -5,8 +5,9 @@ function formatAccount(num = '') {
   return `${clean.slice(0,4)} ${clean.slice(4,8)} ${clean.slice(8,12)}`
 }
 
-export default function ProfileCard({ profile, loan }) {
+export default function ProfileCard({ profile, loan, holderName }) {
   const hasLoan = loan && loan.estado === 'activo'
+  const displayName = profile?.nombre || holderName || profile?.email || 'Cliente'
 
   return (
     <div className="w-full max-w-sm animate-card-flip">
@@ -46,7 +47,7 @@ export default function ProfileCard({ profile, loan }) {
           <div>
             <p className="text-blue-300 text-xs uppercase tracking-widest mb-1">Titular</p>
             <p className="font-bold text-white uppercase tracking-wide text-sm">
-              {profile?.nombre || 'CARGANDO...'}
+              {displayName}
             </p>
           </div>
           <div className="text-right">
