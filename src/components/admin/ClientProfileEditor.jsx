@@ -36,7 +36,7 @@ function Field({ label, children }) {
   )
 }
 
-export default function ClientProfileEditor({ profile: initialProfile, onClose, onSaved }) {
+export default function ClientProfileEditor({ profile: initialProfile, currentAdmin, onClose, onSaved }) {
   // Profile
   const [profileForm, setProfileForm] = useState({
     nombre:            initialProfile.nombre || '',
@@ -70,12 +70,21 @@ export default function ClientProfileEditor({ profile: initialProfile, onClose, 
 
   async function fetchData() {
     setLoading(true)
-    const [{ data: leads }, { data: loans }] = await Promise.all([
+    const [{ data: leads }, { data: states }, { data: loans }] = await Promise.all([
       supabase.from('leads').select('*').eq('user_id', initialProfile.id).order('created_at', { ascending: false }).limit(1),
-      supabase.from('loans').select('*').eq('user_id', initialProfile.id).order('created_at', { ascending: false }).limit(1),
+      supabase.from('lead_admin_states').select('*').eq('admin_id', currentAdmin?.id),
+      supabase.from('loans').select('*').eq('user_id', initialProfile.id).eq('created_by_admin_id', currentAdmin?.id).order('created_at', { ascending: false }).limit(1),
     ])
     if (leads?.[0]) {
-      const ld = leads[0]
+      const baseLead = leads[0]
+      const state = (states || []).find(item => item.lead_id === baseLead.id)
+      const ld = state
+        ? {
+            ...baseLead,
+            ...Object.fromEntries(Object.entries(state).filter(([, value]) => value !== null && value !== undefined)),
+            id: baseLead.id,
+          }
+        : baseLead
       setLead(ld)
       setLeadForm({
         stage:                  ld.stage || 'nuevo',
@@ -143,7 +152,9 @@ export default function ClientProfileEditor({ profile: initialProfile, onClose, 
 
     // 2. Update lead if exists
     if (lead) {
-      const { error: le } = await supabase.from('leads').update({
+      const { error: le } = await supabase.from('lead_admin_states').upsert({
+        lead_id:                lead.id,
+        admin_id:               currentAdmin?.id,
         stage:                  leadForm.stage,
         ingresos:               leadForm.ingresos || null,
         banco:                  leadForm.banco || null,
@@ -157,7 +168,8 @@ export default function ClientProfileEditor({ profile: initialProfile, onClose, 
         estado_civil_admin:     leadForm.estado_civil_admin || null,
         direccion_admin:        leadForm.direccion_admin || null,
         codigo_postal_admin:    leadForm.codigo_postal_admin || null,
-      }).eq('id', lead.id)
+        updated_at:             new Date().toISOString(),
+      }, { onConflict: 'lead_id,admin_id' })
       if (le) errors.push('Solicitud: ' + le.message)
     }
 

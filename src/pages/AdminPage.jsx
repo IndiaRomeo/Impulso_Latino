@@ -34,24 +34,39 @@ export default function AdminPage() {
   const [clientSearch, setClientSearch] = useState('')
   const [showArchived, setShowArchived] = useState(false)
 
-  useEffect(() => { fetchAll() }, [])
+  useEffect(() => {
+    if (user?.id) fetchAll()
+  }, [user?.id])
 
   async function fetchAll() {
     setLoading(true)
     setLoadError('')
-    const [{ data: l, error: leadsError }, { data: m, error: messagesError }, { data: p }] = await Promise.all([
+    const [{ data: l, error: leadsError }, { data: s, error: statesError }, { data: m, error: messagesError }, { data: p }] = await Promise.all([
       supabase.from('leads').select('*').order('created_at', { ascending: false }),
+      supabase.from('lead_admin_states').select('*').eq('admin_id', user.id),
       supabase.from('contact_messages').select('*').order('created_at', { ascending: false }),
       supabase.from('profiles').select('*').order('created_at', { ascending: false }),
     ])
 
-    if (leadsError || messagesError) {
-      const error = leadsError || messagesError
+    if (leadsError || statesError || messagesError) {
+      const error = leadsError || statesError || messagesError
       setLoadError(error.message || 'No se pudieron cargar los datos del panel.')
       console.error('Admin load error:', error)
     }
 
-    setLeads(l || [])
+    const statesByLead = new Map((s || []).map(state => [state.lead_id, state]))
+    setLeads((l || []).map(lead => {
+      const state = statesByLead.get(lead.id)
+      return state
+        ? {
+            ...lead,
+            ...Object.fromEntries(Object.entries(state).filter(([, value]) => value !== null && value !== undefined)),
+            id: lead.id,
+            lead_admin_state_id: state.id,
+            lead_id: lead.id,
+          }
+        : lead
+    }))
     setMessages(m || [])
     setProfiles(p || [])
     setLoading(false)
@@ -66,7 +81,9 @@ export default function AdminPage() {
   }
 
   async function updateLead(updated) {
-    await supabase.from('leads').update({
+    await supabase.from('lead_admin_states').upsert({
+      lead_id:                 updated.id,
+      admin_id:                user.id,
       stage:                   updated.stage,
       notas:                   updated.notas,
       fecha_nacimiento_admin:  updated.fecha_nacimiento_admin || null,
@@ -75,19 +92,8 @@ export default function AdminPage() {
       estado_civil_admin:      updated.estado_civil_admin || null,
       desembolso_estado:       updated.desembolso_estado || null,
       archived:                updated.archived === true,
-    }).eq('id', updated.id)
-
-    // Sync admin-filled fields to the client's profile so they see it in their Perfil tab
-    if (updated.user_id) {
-      const profileSync = {}
-      if (updated.fecha_nacimiento_admin) profileSync.fecha_nacimiento  = updated.fecha_nacimiento_admin
-      if (updated.direccion_admin)        profileSync.direccion         = updated.direccion_admin
-      if (updated.codigo_postal_admin)    profileSync.codigo_postal     = updated.codigo_postal_admin
-      if (updated.estado_civil_admin)     profileSync.estado_civil      = updated.estado_civil_admin
-      if (Object.keys(profileSync).length > 0) {
-        await supabase.from('profiles').update(profileSync).eq('id', updated.user_id)
-      }
-    }
+      updated_at:              new Date().toISOString(),
+    }, { onConflict: 'lead_id,admin_id' })
 
     setLeads(prev => prev.map(l => l.id === updated.id ? { ...l, ...updated } : l))
   }
@@ -453,12 +459,13 @@ export default function AdminPage() {
       </div>
 
       {selectedLead && (
-        <LeadProfile lead={selectedLead} onClose={() => setSelectedLead(null)} onUpdate={updateLead} />
+        <LeadProfile lead={selectedLead} currentAdmin={user} onClose={() => setSelectedLead(null)} onUpdate={updateLead} />
       )}
 
       {selectedProfile && (
         <ClientProfileEditor
           profile={selectedProfile}
+          currentAdmin={user}
           onClose={() => setSelectedProfile(null)}
           onSaved={handleProfileSaved}
         />

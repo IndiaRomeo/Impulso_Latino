@@ -32,7 +32,7 @@ function InfoRow({ icon: Icon, label, value }) {
   )
 }
 
-export default function LeadProfile({ lead, onClose, onUpdate }) {
+export default function LeadProfile({ lead, currentAdmin, onClose, onUpdate }) {
   const [extra, setExtra] = useState({
     fecha_nacimiento_admin: lead.fecha_nacimiento_admin || '',
     direccion_admin:        lead.direccion_admin || '',
@@ -64,7 +64,12 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
   useEffect(() => { fetchExistingLoan() }, [])
 
   async function fetchExistingLoan() {
-    const { data } = await supabase.from('loans').select('*').eq('lead_id', lead.id).maybeSingle()
+    const { data } = await supabase
+      .from('loans')
+      .select('*')
+      .eq('lead_id', lead.id)
+      .eq('created_by_admin_id', currentAdmin?.id)
+      .maybeSingle()
     if (data) {
       setExistingLoan(data)
       if (!loanInitialized) {
@@ -83,7 +88,7 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
 
   async function save() {
     setSaving(true)
-    onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado })
+    await onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado })
 
     if (existingLoan) {
       const newTotal   = calcAmount * (1 + rateDecimal)
@@ -110,7 +115,12 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
     const due   = new Date(start)
     due.setMonth(due.getMonth() + calcTerm)
 
-    const { data: existing } = await supabase.from('loans').select('id').eq('lead_id', lead.id).maybeSingle()
+    const { data: existing } = await supabase
+      .from('loans')
+      .select('id')
+      .eq('lead_id', lead.id)
+      .eq('created_by_admin_id', currentAdmin?.id)
+      .maybeSingle()
     if (existing) { setCreatingLoan(false); setLoanMessage('Este lead ya tiene un prestamo creado.'); return }
 
     const newTotal   = calcAmount * (1 + rateDecimal)
@@ -119,6 +129,7 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
     const { data: newLoan, error: loanErr } = await supabase.from('loans').insert({
       user_id:           lead.user_id,
       lead_id:           lead.id,
+      created_by_admin_id: currentAdmin?.id || null,
       numero_prestamo:   `IL-${Date.now().toString().slice(-8)}`,
       monto:             Number(Number(calcAmount).toFixed(2)),
       plazo_meses:       calcTerm,
@@ -144,21 +155,17 @@ export default function LeadProfile({ lead, onClose, onUpdate }) {
   async function handleArchive() {
     setArchiving(true)
     const newArchived = !lead.archived
-    await supabase.from('leads').update({ archived: newArchived }).eq('id', lead.id)
+    await onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado, archived: newArchived })
     setArchiving(false)
     setArchiveConfirm(false)
-    onUpdate({ ...lead, ...extra, stage, desembolso_estado: desembolsoEstado, archived: newArchived })
     onClose()
   }
 
   async function setDisbursementStatus(status) {
     setSettingStatus(true)
-    const { error } = await supabase.from('leads').update({ desembolso_estado: status }).eq('id', lead.id)
+    await onUpdate({ ...lead, ...extra, stage, desembolso_estado: status })
     setSettingStatus(false)
-    if (!error) {
-      setDesembolsoEstado(status)
-      onUpdate({ ...lead, ...extra, stage, desembolso_estado: status })
-    }
+    setDesembolsoEstado(status)
   }
 
   const disbStatus = DISBURSEMENT_STATUS[desembolsoEstado] || DISBURSEMENT_STATUS['']
