@@ -8,6 +8,7 @@ import KanbanBoard from '../components/crm/KanbanBoard.jsx'
 import LeadProfile from '../components/crm/LeadProfile.jsx'
 import DisbursementDataView from '../components/admin/DisbursementDataView.jsx'
 import ClientProfileEditor from '../components/admin/ClientProfileEditor.jsx'
+import { DEFAULT_ADMIN_ID, getAdminRouteById } from '../config/adminRouting.js'
 
 const PIPELINE_STAGES = [
   { id: 'nuevo',        label: 'Solicitud recibida',   color: 'bg-blue-100 text-blue-800',   dot: 'bg-blue-500' },
@@ -39,7 +40,7 @@ const ADMIN_STATE_FIELDS = [
 ]
 
 const HIDE_FORM_LINK_ADMIN_IDS = new Set([
-  'd5b2d17c-2177-45d4-a8cb-479c0a68fa48',
+  DEFAULT_ADMIN_ID,
 ])
 
 function mergeLeadWithAdminState(lead, state) {
@@ -158,8 +159,9 @@ export default function AdminPage() {
   })
 
   const unread = messages.filter(m => !m.leido).length
-  const formLink = user?.id ? `${window.location.origin}/?admin=${user.id}#formulario` : ''
-  const showFormLink = user?.id && !HIDE_FORM_LINK_ADMIN_IDS.has(user.id)
+  const adminRoute = getAdminRouteById(user?.id)
+  const formLink = adminRoute ? `${window.location.origin}/?asesor=${adminRoute.slug}#formulario` : ''
+  const showFormLink = adminRoute && !HIDE_FORM_LINK_ADMIN_IDS.has(user.id)
 
   async function copyFormLink() {
     if (!formLink) return

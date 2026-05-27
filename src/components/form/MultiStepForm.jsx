@@ -39,7 +39,7 @@ function getSubmitErrorMessage(err) {
   return message || 'Ocurrio un error al enviar tu solicitud. Intenta nuevamente.'
 }
 
-export default function MultiStepForm({ assignedAdminId = null }) {
+export default function MultiStepForm({ assignedAdminId = null, adminRoute = null }) {
   const [step, setStep] = useState(1)
   const [data, setData] = useState(initialData)
   const [submitted, setSubmitted] = useState(false)
@@ -147,7 +147,7 @@ export default function MultiStepForm({ assignedAdminId = null }) {
 
   const progress = (step / STEPS.length) * 100
 
-  if (submitted) return <SuccessScreen data={data} />
+  if (submitted) return <SuccessScreen data={data} adminRoute={adminRoute} />
 
   return (
     <div className="max-w-2xl mx-auto px-0 sm:px-4">

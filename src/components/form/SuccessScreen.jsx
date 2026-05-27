@@ -1,9 +1,9 @@
 import { CheckCircle, LogIn, MessageCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { getDefaultAdminRoute } from '../../config/adminRouting.js'
 
-const WA_NUMBER = '13235031139'
-
-export default function SuccessScreen({ data }) {
+export default function SuccessScreen({ data, adminRoute }) {
+  const contact = adminRoute || getDefaultAdminRoute()
   const waMessage = encodeURIComponent(
     `Hola! Soy ${data.nombre} de ${data.estado}. Ya llene el formulario de solicitud de prestamo en Impulso Latino y quiero continuar con mi aplicacion.`
   )
@@ -31,7 +31,7 @@ export default function SuccessScreen({ data }) {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 animate-fade-up delay-400">
           <a
-            href={`https://wa.me/${WA_NUMBER}?text=${waMessage}`}
+            href={`https://wa.me/${contact.whatsapp}?text=${waMessage}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-white font-bold text-lg py-4 px-7 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
@@ -58,7 +58,7 @@ export default function SuccessScreen({ data }) {
         </div>
 
         <p className="text-xs text-gray-400 mt-6">
-          Tambien puedes llamarnos al +1 (323) 503-1139 - Lun-Vie 9am-6pm EST
+          Tambien puedes llamarnos al {contact.whatsappLabel} - Lun-Vie 9am-6pm EST
         </p>
       </div>
     </div>

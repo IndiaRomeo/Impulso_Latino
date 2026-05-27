@@ -1,10 +1,12 @@
-const WA_NUMBER = '13235031139'
+import { getDefaultAdminRoute } from '../../config/adminRouting.js'
 const WA_MESSAGE = encodeURIComponent('Hola, me interesa información sobre préstamos en Impulso Latino.')
 
-export default function WhatsAppButton() {
+export default function WhatsAppButton({ adminRoute }) {
+  const contact = adminRoute || getDefaultAdminRoute()
+
   return (
     <a
-      href={`https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`}
+      href={`https://wa.me/${contact.whatsapp}?text=${WA_MESSAGE}`}
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-full shadow-2xl transition-all duration-300 hover:scale-105 group animate-fade-up delay-500"

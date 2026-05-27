@@ -1,10 +1,11 @@
 import { Phone, Mail, Clock, Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import Logo from '../Logo.jsx'
+import { getDefaultAdminRoute } from '../../config/adminRouting.js'
 
-const WA_NUMBER = '13235031139'
+export default function Footer({ adminRoute }) {
+  const contact = adminRoute || getDefaultAdminRoute()
 
-export default function Footer() {
   return (
     <footer className="bg-primary text-white">
       <div className="max-w-6xl mx-auto px-4 py-16">
@@ -22,8 +23,8 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-lg mb-4">Contacto</h4>
             <div className="space-y-3">
-              <a href={`https://wa.me/${WA_NUMBER}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-blue-200 hover:text-white transition-colors">
-                <Phone size={16} /><span className="text-sm">+1 (323) 503-1139</span>
+              <a href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-blue-200 hover:text-white transition-colors">
+                <Phone size={16} /><span className="text-sm">{contact.whatsappLabel}</span>
               </a>
               <a href="mailto:info@impulsolatino.com" className="flex items-center gap-3 text-blue-200 hover:text-white transition-colors">
                 <Mail size={16} /><span className="text-sm">info@impulsolatino.com</span>
