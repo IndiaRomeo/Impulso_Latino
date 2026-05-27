@@ -39,7 +39,7 @@ function getSubmitErrorMessage(err) {
   return message || 'Ocurrio un error al enviar tu solicitud. Intenta nuevamente.'
 }
 
-export default function MultiStepForm() {
+export default function MultiStepForm({ assignedAdminId = null }) {
   const [step, setStep] = useState(1)
   const [data, setData] = useState(initialData)
   const [submitted, setSubmitted] = useState(false)
@@ -102,6 +102,7 @@ export default function MultiStepForm() {
         nombre: data.nombre,
         telefono: data.telefono,
         estado_residencia: data.estado,
+        assigned_admin_id: assignedAdminId,
       }
 
       const { error: profileErr } = existingProfile
@@ -117,6 +118,7 @@ export default function MultiStepForm() {
 
       const { error: dbErr } = await supabase.from('leads').insert({
         user_id: authUser.id,
+        assigned_admin_id: assignedAdminId,
         nombre: data.nombre,
         email,
         telefono: data.telefono,

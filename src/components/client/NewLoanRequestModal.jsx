@@ -26,6 +26,7 @@ export default function NewLoanRequestModal({ user, profile, onClose, onCreated 
 
     const { data, error: dbErr } = await supabase.from('leads').insert({
       user_id: user.id,
+      assigned_admin_id: profile?.assigned_admin_id || null,
       nombre: profile?.nombre || user.email?.split('@')[0] || 'Cliente',
       email: user.email,
       telefono: profile?.telefono || '',

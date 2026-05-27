@@ -11,9 +11,15 @@ import MultiStepForm from '../components/form/MultiStepForm.jsx'
 import LoanCalculator from '../components/landing/LoanCalculator.jsx'
 import { Shield } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useSearchParams } from 'react-router-dom'
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 export default function LandingPage() {
   const { user } = useAuth()
+  const [searchParams] = useSearchParams()
+  const adminParam = searchParams.get('admin') || ''
+  const assignedAdminId = UUID_RE.test(adminParam) ? adminParam : null
 
   return (
     <div className="min-h-screen">
@@ -39,7 +45,7 @@ export default function LandingPage() {
 
           <div className="grid lg:grid-cols-5 gap-10 items-start">
             <div className="lg:col-span-3">
-              <MultiStepForm />
+              <MultiStepForm assignedAdminId={assignedAdminId} />
             </div>
             <div className="hidden lg:block lg:col-span-2">
               <div className="animate-float">

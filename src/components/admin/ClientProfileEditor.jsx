@@ -71,7 +71,7 @@ export default function ClientProfileEditor({ profile: initialProfile, currentAd
   async function fetchData() {
     setLoading(true)
     const [{ data: leads }, { data: states }, { data: loans }] = await Promise.all([
-      supabase.from('leads').select('*').eq('user_id', initialProfile.id).order('created_at', { ascending: false }).limit(1),
+      supabase.from('leads').select('*').eq('user_id', initialProfile.id).eq('assigned_admin_id', currentAdmin?.id).order('created_at', { ascending: false }).limit(1),
       supabase.from('lead_admin_states').select('*').eq('admin_id', currentAdmin?.id),
       supabase.from('loans').select('*').eq('user_id', initialProfile.id).eq('created_by_admin_id', currentAdmin?.id).order('created_at', { ascending: false }).limit(1),
     ])

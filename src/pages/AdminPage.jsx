@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Users, TrendingUp, DollarSign, Clock, Search, Plus, LayoutGrid, List, ArrowLeft, MessageSquare, CheckCheck, Mail, Phone, Reply, X, UserCog, Archive, ArchiveRestore } from 'lucide-react'
+import { Users, TrendingUp, DollarSign, Clock, Search, Plus, LayoutGrid, List, ArrowLeft, MessageSquare, CheckCheck, Mail, Phone, Reply, X, UserCog, Archive, ArchiveRestore, Copy, Link2 } from 'lucide-react'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import Logo from '../components/Logo.jsx'
@@ -67,6 +67,7 @@ export default function AdminPage() {
   const [stageFilter, setStageFilter] = useState('all')
   const [clientSearch, setClientSearch] = useState('')
   const [showArchived, setShowArchived] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
 
   useEffect(() => {
     if (user?.id) fetchAll()
@@ -76,10 +77,10 @@ export default function AdminPage() {
     setLoading(true)
     setLoadError('')
     const [{ data: l, error: leadsError }, { data: s, error: statesError }, { data: m, error: messagesError }, { data: p }] = await Promise.all([
-      supabase.from('leads').select('*').order('created_at', { ascending: false }),
+      supabase.from('leads').select('*').eq('assigned_admin_id', user.id).order('created_at', { ascending: false }),
       supabase.from('lead_admin_states').select('*').eq('admin_id', user.id),
       supabase.from('contact_messages').select('*').order('created_at', { ascending: false }),
-      supabase.from('profiles').select('*').order('created_at', { ascending: false }),
+      supabase.from('profiles').select('*').eq('assigned_admin_id', user.id).order('created_at', { ascending: false }),
     ])
 
     if (leadsError || statesError || messagesError) {
@@ -153,6 +154,14 @@ export default function AdminPage() {
   })
 
   const unread = messages.filter(m => !m.leido).length
+  const formLink = user?.id ? `${window.location.origin}/?admin=${user.id}#formulario` : ''
+
+  async function copyFormLink() {
+    if (!formLink) return
+    await navigator.clipboard.writeText(formLink)
+    setCopiedLink(true)
+    setTimeout(() => setCopiedLink(false), 2000)
+  }
 
   const stats = [
     { label: 'Leads Activos',   value: activeLeads.length,                                         icon: Users,         bg: 'bg-blue-50',   fg: 'text-blue-600' },
@@ -191,6 +200,25 @@ export default function AdminPage() {
       </div>
 
       <div className="max-w-full px-4 py-4 md:py-6">
+        <div className="mb-5 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col lg:flex-row gap-3 lg:items-center">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="bg-primary/10 text-primary rounded-xl p-2 flex-shrink-0">
+              <Link2 size={18} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-primary">Link de formulario para este admin</p>
+              <p className="text-xs text-gray-400 truncate">{formLink}</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={copyFormLink}
+            className="bg-primary hover:bg-blue-900 text-white font-semibold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-colors"
+          >
+            <Copy size={15} /> {copiedLink ? 'Copiado' : 'Copiar link'}
+          </button>
+        </div>
+
         {loadError && (
           <div className="mb-5 bg-red-50 border border-red-200 text-red-700 rounded-2xl p-4">
             <p className="font-bold text-sm">No se pudieron cargar los datos de Supabase.</p>
