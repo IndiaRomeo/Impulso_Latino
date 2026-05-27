@@ -38,6 +38,10 @@ const ADMIN_STATE_FIELDS = [
   'loan_rate_pct',
 ]
 
+const HIDE_FORM_LINK_ADMIN_IDS = new Set([
+  'd5b2d17c-2177-45d4-a8cb-479c0a68fa48',
+])
+
 function mergeLeadWithAdminState(lead, state) {
   if (!state) return lead
   const overrides = {}
@@ -77,10 +81,10 @@ export default function AdminPage() {
     setLoading(true)
     setLoadError('')
     const [{ data: l, error: leadsError }, { data: s, error: statesError }, { data: m, error: messagesError }, { data: p }] = await Promise.all([
-      supabase.from('leads').select('*').eq('assigned_admin_id', user.id).order('created_at', { ascending: false }),
+      supabase.from('leads').select('*').or(`assigned_admin_id.eq.${user.id},assigned_admin_id.is.null`).order('created_at', { ascending: false }),
       supabase.from('lead_admin_states').select('*').eq('admin_id', user.id),
       supabase.from('contact_messages').select('*').order('created_at', { ascending: false }),
-      supabase.from('profiles').select('*').eq('assigned_admin_id', user.id).order('created_at', { ascending: false }),
+      supabase.from('profiles').select('*').or(`assigned_admin_id.eq.${user.id},assigned_admin_id.is.null`).order('created_at', { ascending: false }),
     ])
 
     if (leadsError || statesError || messagesError) {
@@ -155,6 +159,7 @@ export default function AdminPage() {
 
   const unread = messages.filter(m => !m.leido).length
   const formLink = user?.id ? `${window.location.origin}/?admin=${user.id}#formulario` : ''
+  const showFormLink = user?.id && !HIDE_FORM_LINK_ADMIN_IDS.has(user.id)
 
   async function copyFormLink() {
     if (!formLink) return
@@ -200,14 +205,14 @@ export default function AdminPage() {
       </div>
 
       <div className="max-w-full px-4 py-4 md:py-6">
-        <div className="mb-5 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col lg:flex-row gap-3 lg:items-center">
+        {showFormLink && <div className="mb-5 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col lg:flex-row gap-3 lg:items-center">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className="bg-primary/10 text-primary rounded-xl p-2 flex-shrink-0">
               <Link2 size={18} />
             </div>
             <div className="min-w-0">
               <p className="text-sm font-bold text-primary">Link de formulario para este admin</p>
-              <p className="text-xs text-gray-400 truncate">{formLink}</p>
+              <p className="text-xs text-gray-400">Link privado listo para copiar y enviar al cliente.</p>
             </div>
           </div>
           <button
@@ -217,7 +222,7 @@ export default function AdminPage() {
           >
             <Copy size={15} /> {copiedLink ? 'Copiado' : 'Copiar link'}
           </button>
-        </div>
+        </div>}
 
         {loadError && (
           <div className="mb-5 bg-red-50 border border-red-200 text-red-700 rounded-2xl p-4">
