@@ -9,7 +9,7 @@ export const ADMIN_ROUTES = [
   },
   {
     id: 'de4c7784-f1ef-45c9-ba13-6dd91d4b0215',
-    slug: 'admin2',
+    slug: 'camilo',
     whatsapp: '19472804624',
     whatsappLabel: '+1 (947) 280-4624',
   },
