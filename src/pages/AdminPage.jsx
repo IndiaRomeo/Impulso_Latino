@@ -82,10 +82,10 @@ export default function AdminPage() {
     setLoading(true)
     setLoadError('')
     const [{ data: l, error: leadsError }, { data: s, error: statesError }, { data: m, error: messagesError }, { data: p }] = await Promise.all([
-      supabase.from('leads').select('*').or(`assigned_admin_id.eq.${user.id},assigned_admin_id.is.null`).order('created_at', { ascending: false }),
+      supabase.from('leads').select('*').eq('assigned_admin_id', user.id).order('created_at', { ascending: false }),
       supabase.from('lead_admin_states').select('*').eq('admin_id', user.id),
       supabase.from('contact_messages').select('*').order('created_at', { ascending: false }),
-      supabase.from('profiles').select('*').or(`assigned_admin_id.eq.${user.id},assigned_admin_id.is.null`).order('created_at', { ascending: false }),
+      supabase.from('profiles').select('*').eq('assigned_admin_id', user.id).order('created_at', { ascending: false }),
     ])
 
     if (leadsError || statesError || messagesError) {

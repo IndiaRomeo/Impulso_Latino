@@ -91,7 +91,7 @@ export default function MultiStepForm({ assignedAdminId = null, adminRoute = nul
 
       const { data: existingProfile, error: profileLookupErr } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, assigned_admin_id')
         .eq('id', authUser.id)
         .maybeSingle()
 
@@ -102,7 +102,10 @@ export default function MultiStepForm({ assignedAdminId = null, adminRoute = nul
         nombre: data.nombre,
         telefono: data.telefono,
         estado_residencia: data.estado,
-        assigned_admin_id: assignedAdminId,
+      }
+
+      if (!existingProfile?.assigned_admin_id) {
+        profilePayload.assigned_admin_id = assignedAdminId
       }
 
       const { error: profileErr } = existingProfile
