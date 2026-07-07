@@ -1,0 +1,141 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Length 4455 >>
+stream
+0.95 0.97 1 rg 0 0 612 792 re f
+1 1 1 rg 42 36 528 720 re f
+0.88 0.90 0.94 RG 42 36 528 720 re S
+0.45 0.49 0.56 rg BT /F1 8 Tf 500 28 Td (1) Tj ET
+0.15 0.39 0.92 rg BT /F2 9 Tf 56 736 Td (ENTREGA DE PROYECTO) Tj ET
+0.07 0.09 0.15 rg BT /F2 24 Tf 56 708 Td (Informe de desarrollo y costos) Tj ET
+0.29 0.33 0.39 rg BT /F1 12 Tf 56 688 Td (Proyecto Impulso Latino) Tj ET
+0.98 0.98 0.99 rg 56 604 500 58 re f
+0.82 0.85 0.90 RG 56 604 500 58 re S
+0.12 0.16 0.22 rg BT /F2 10 Tf 70 662 Td (Cliente: Impulso Latino) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 330 662 Td (Fecha: 7 de mayo de 2026) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 70 639 Td (Proyecto: Plataforma web de gestion de prestamos) Tj ET
+0.07 0.09 0.15 rg BT /F2 10 Tf 330 639 Td (Total: $ 1.125.000) Tj ET
+0.11 0.30 0.70 rg BT /F2 14 Tf 56 589 Td (Resumen del trabajo realizado) Tj ET
+0.75 0.83 0.96 RG 56 579 m 556 579 l S
+0.12 0.16 0.22 rg BT /F1 10 Tf 56 571 Td (Se desarrollo una plataforma web para la gestion de solicitudes de prestamos, seguimiento) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 56 557 Td (de clientes, administracion interna y puesta en produccion para uso desde navegador o como) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 56 543 Td (aplicacion instalada en el dispositivo.) Tj ET
+0.11 0.30 0.70 rg BT /F2 14 Tf 56 518 Td (Alcance entregado) Tj ET
+0.75 0.83 0.96 RG 56 508 m 556 508 l S
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 500 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 500 Td (Sitio publico responsive con secciones comerciales, requisitos, confianza, contacto y) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 487 Td (llamados a aplicar.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 473 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 473 Td (Calculadora interactiva de prestamo para estimar cuotas segun monto y plazo.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 459 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 459 Td (Formulario de solicitud en 4 pasos con registro de datos personales, laborales,) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 446 Td (bancarios y detalles del prestamo.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 432 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 432 Td (Creacion de cuenta de cliente e inicio de sesion con rutas protegidas.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 418 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 418 Td (Portal del cliente con estado de solicitud, perfil, prestamos, solicitudes nuevas y) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 405 Td (datos de desembolso.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 391 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 391 Td (Panel administrativo tipo CRM para revisar leads, mover etapas, ver perfiles y) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 378 Td (gestionar informacion del cliente.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 364 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 364 Td (Modulo de prestamos aprobados, saldo, cuotas, fechas y estado del prestamo.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 350 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 350 Td (Modulo de mensajes de contacto conectado al panel administrativo, con asignacion por) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 337 Td (administrador.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 323 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 323 Td (Base de datos en Supabase con perfiles, leads, prestamos, mensajes de contacto y) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 310 Td (politicas de seguridad RLS.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 296 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 296 Td (Migraciones de base de datos para funcionalidades nuevas y separacion de trabajo por) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 283 Td (administradores.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 269 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 269 Td (Configuracion PWA para instalar la plataforma en celular o computador como aplicacion.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 255 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 255 Td (Guias de uso para cliente/equipo y guia de instalacion de la app.) Tj ET
+0.11 0.30 0.70 rg BT /F2 14 Tf 56 233 Td (Tecnologias utilizadas) Tj ET
+0.75 0.83 0.96 RG 56 223 m 556 223 l S
+0.12 0.16 0.22 rg BT /F1 10 Tf 56 215 Td (React + Vite · Tailwind CSS · Supabase Auth y base de datos · React Router · PWA · Resend) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 56 201 Td (para integraciones de correo) Tj ET
+0.11 0.30 0.70 rg BT /F2 14 Tf 56 176 Td (Desglose de costos) Tj ET
+0.75 0.83 0.96 RG 56 166 m 556 166 l S
+endstream
+endobj
+4 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 3 0 R >>
+endobj
+5 0 obj
+<< /Length 2520 >>
+stream
+0.95 0.97 1 rg 0 0 612 792 re f
+1 1 1 rg 42 36 528 720 re f
+0.88 0.90 0.94 RG 42 36 528 720 re S
+0.45 0.49 0.56 rg BT /F1 8 Tf 500 28 Td (2) Tj ET
+0.93 0.96 1 rg 56 714 500 22 re f
+0.75 0.83 0.96 RG 56 714 500 22 re S
+0.12 0.23 0.49 rg BT /F2 10 Tf 64 736 Td (Concepto) Tj ET
+0.12 0.23 0.49 rg BT /F2 10 Tf 224 736 Td (Descripcion) Tj ET
+0.12 0.23 0.49 rg BT /F2 10 Tf 494 736 Td (Valor) Tj ET
+1 1 1 rg 56 672 500 42 re f
+0.82 0.85 0.90 RG 56 672 500 42 re S
+0.07 0.09 0.15 rg BT /F2 9 Tf 64 714 Td (Desarrollo de la plataforma web) Tj ET
+0.12 0.16 0.22 rg BT /F1 8.5 Tf 224 714 Td (Diseno e implementacion de sitio publico,) Tj ET
+0.12 0.16 0.22 rg BT /F1 8.5 Tf 224 703 Td (formulario, portal de cliente, panel) Tj ET
+0.12 0.16 0.22 rg BT /F1 8.5 Tf 224 692 Td (administrativo, CRM, autenticacion, conexion con) Tj ET
+0.07 0.09 0.15 rg BT /F2 9 Tf 470 714 Td ($ 600.000) Tj ET
+1 1 1 rg 56 630 500 42 re f
+0.82 0.85 0.90 RG 56 630 500 42 re S
+0.07 0.09 0.15 rg BT /F2 9 Tf 64 672 Td (Produccion y puesta en marcha) Tj ET
+0.12 0.16 0.22 rg BT /F1 8.5 Tf 224 672 Td (Configuracion necesaria para dejar el proyecto) Tj ET
+0.12 0.16 0.22 rg BT /F1 8.5 Tf 224 661 Td (funcionando en produccion, incluyendo) Tj ET
+0.12 0.16 0.22 rg BT /F1 8.5 Tf 224 650 Td (preparacion de despliegue, servicios,) Tj ET
+0.07 0.09 0.15 rg BT /F2 9 Tf 470 672 Td ($ 525.000) Tj ET
+0.07 0.09 0.15 rg 56 605 500 25 re f
+0.07 0.09 0.15 RG 56 605 500 25 re S
+1 1 1 rg BT /F2 11 Tf 64 630 Td (Total del proyecto) Tj ET
+1 1 1 rg BT /F2 11 Tf 464 630 Td ($ 1.125.000) Tj ET
+0.11 0.30 0.70 rg BT /F2 14 Tf 56 584 Td (Notas) Tj ET
+0.75 0.83 0.96 RG 56 574 m 556 574 l S
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 566 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 566 Td (Los valores estan expresados en pesos colombianos \(COP\).) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 552 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 552 Td (El valor de produccion agrupa los costos necesarios para tener el proyecto disponible) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 539 Td (y funcionando fuera del entorno local.) Tj ET
+0.12 0.16 0.22 rg BT /F2 10 Tf 64 525 Td (-) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 525 Td (No incluye cambios futuros de alcance, nuevas funcionalidades o mantenimiento) Tj ET
+0.12 0.16 0.22 rg BT /F1 10 Tf 80 512 Td (recurrente, salvo acuerdo adicional.) Tj ET
+0.82 0.85 0.90 RG 56 482 m 556 482 l S
+0.42 0.45 0.50 rg BT /F1 8.5 Tf 56 466 Td (Documento preparado para presentar el alcance, entregables y costos del proyecto Impulso Latino.) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+8 0 obj
+<< /Type /Catalog /Pages 7 0 R >>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000009 00000 n 
+0000000079 00000 n 
+0000000154 00000 n 
+0000004660 00000 n 
+0000004796 00000 n 
+0000007367 00000 n 
+0000007503 00000 n 
+0000007566 00000 n 
+trailer
+<< /Size 9 /Root 8 0 R >>
+startxref
+7615
+%%EOF
