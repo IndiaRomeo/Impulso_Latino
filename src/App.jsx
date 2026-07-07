@@ -38,10 +38,6 @@ export default function App() {
         <p style={{ marginTop: "10px" }}>
           Si usted es el propietario del sitio, comuníquese con el administrador para reactivar el servicio.
         </p>
-
-        <p style={{ marginTop: "30px", fontWeight: "bold" }}>
-          WhatsApp: +1 (448) 203-5476
-        </p>
       </div>
     );
   }
