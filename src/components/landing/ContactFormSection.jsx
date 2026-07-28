@@ -59,7 +59,7 @@ export default function ContactFormSection({ adminRoute }) {
 
             <div className="card-hover border border-gray-50">
               <div className="flex items-start gap-4">
-                <div className="bg-secondary-100 rounded-2xl p-3 flex-shrink-0">
+                <div className="bg-blue-100 rounded-2xl p-3 flex-shrink-0">
                   <Mail size={22} className="text-secondary" />
                 </div>
                 <div>

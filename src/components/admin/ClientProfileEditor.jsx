@@ -208,7 +208,7 @@ export default function ClientProfileEditor({ profile: initialProfile, currentAd
             </div>
             <div>
               <h2 className="text-white font-bold">{initialProfile.nombre || 'Sin nombre'}</h2>
-              <p className="text-primary-200 text-xs">{initialProfile.email}</p>
+              <p className="text-blue-200 text-xs">{initialProfile.email}</p>
             </div>
           </div>
           <button onClick={onClose} className="text-white/70 hover:text-white"><X size={20}/></button>
@@ -437,7 +437,7 @@ export default function ClientProfileEditor({ profile: initialProfile, currentAd
               <button type="button" onClick={onClose} className="flex-1 py-3 rounded-xl font-bold border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition-all">
                 Cancelar
               </button>
-              <button type="submit" disabled={saving} className="flex-1 bg-primary hover:bg-primary-950 disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+              <button type="submit" disabled={saving} className="flex-1 bg-primary hover:bg-blue-900 disabled:opacity-60 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
                 <Save size={16}/> {saving ? 'Guardando todo...' : 'Guardar todos los cambios'}
               </button>
             </div>

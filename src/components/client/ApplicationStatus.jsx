@@ -130,9 +130,9 @@ export default function ApplicationStatus({ lead, onOpenDisbursement }) {
               )}
 
               {isDisbursedStage && !desembolsoEstado && (
-                <div className="mt-3 bg-secondary-50 border border-secondary-200 rounded-xl p-3 flex items-start gap-2">
-                  <AlertCircle size={18} className="text-secondary-500 flex-shrink-0 mt-0.5"/>
-                  <p className="text-sm text-secondary-700">Tu desembolso está en proceso. Un asesor confirmará el envío pronto.</p>
+                <div className="mt-3 bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-start gap-2">
+                  <AlertCircle size={18} className="text-blue-500 flex-shrink-0 mt-0.5"/>
+                  <p className="text-sm text-blue-700">Tu desembolso está en proceso. Un asesor confirmará el envío pronto.</p>
                 </div>
               )}
             </div>
@@ -140,7 +140,7 @@ export default function ApplicationStatus({ lead, onOpenDisbursement }) {
         })}
       </div>
 
-      <div className="mt-5 bg-secondary-50 rounded-xl p-4 flex items-start gap-3">
+      <div className="mt-5 bg-blue-50 rounded-xl p-4 flex items-start gap-3">
         <Clock size={16} className="text-secondary flex-shrink-0 mt-0.5" />
         <p className="text-sm text-gray-600">
           Solicitado el <span className="font-medium">{new Date(lead.created_at).toLocaleDateString('es-US', { year:'numeric', month:'long', day:'numeric' })}</span>

@@ -6,7 +6,7 @@ export default function LoanCard({ loan }) {
   const estadoColors = {
     activo:     'bg-green-100 text-green-700',
     en_proceso: 'bg-yellow-100 text-yellow-700',
-    pagado:     'bg-secondary-100 text-secondary-700',
+    pagado:     'bg-blue-100 text-blue-700',
     rechazado:  'bg-red-100 text-red-700',
   }
 

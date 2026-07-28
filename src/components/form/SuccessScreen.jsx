@@ -5,7 +5,7 @@ import { getDefaultAdminRoute } from '../../config/adminRouting.js'
 export default function SuccessScreen({ data, adminRoute }) {
   const contact = adminRoute || getDefaultAdminRoute()
   const waMessage = encodeURIComponent(
-    `Hola! Soy ${data.nombre} de ${data.estado}. Ya llene el formulario de solicitud de prestamo en Financial Boost y quiero continuar con mi aplicacion.`
+    `Hola! Soy ${data.nombre} de ${data.estado}. Ya llene el formulario de solicitud de prestamo en Impulso Latino y quiero continuar con mi aplicacion.`
   )
 
   return (
@@ -41,7 +41,7 @@ export default function SuccessScreen({ data, adminRoute }) {
           </a>
           <Link
             to="/dashboard"
-            className="inline-flex items-center justify-center gap-2 bg-secondary-100 text-secondary font-semibold text-sm py-4 px-6 rounded-xl border border-secondary/20 hover:bg-secondary-200 transition-colors"
+            className="inline-flex items-center justify-center gap-2 bg-blue-50 text-secondary font-semibold text-sm py-4 px-6 rounded-xl border border-secondary/20 hover:bg-blue-100 transition-colors"
           >
             <LogIn size={16} />
             Entrar a mi cuenta

@@ -181,12 +181,12 @@ export default function DashboardPage() {
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
               <p className="text-white font-semibold text-sm">{displayName}</p>
-              <p className="text-primary-300 text-xs">Mi cuenta</p>
+              <p className="text-blue-300 text-xs">Mi cuenta</p>
             </div>
             <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center text-white font-black text-sm">
               {(displayName || 'U')[0].toUpperCase()}
             </div>
-            <button onClick={signOut} className="text-primary-300 hover:text-white transition-colors p-1">
+            <button onClick={signOut} className="text-blue-300 hover:text-white transition-colors p-1">
               <LogOut size={18} />
             </button>
           </div>
@@ -222,14 +222,14 @@ export default function DashboardPage() {
               <h1 className="text-2xl font-black text-primary">
                 Hola, {displayName.split(' ')[0]}
               </h1>
-              <p className="text-gray-500 mt-1">Aqui tienes un resumen de tu cuenta con Financial Boost.</p>
+              <p className="text-gray-500 mt-1">Aqui tienes un resumen de tu cuenta con Impulso Latino.</p>
             </div>
 
             {latestLead && !activeLoan && (
               <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl p-5 text-white flex items-center justify-between gap-4 animate-fade-up delay-100">
                 <div className="min-w-0">
                   <p className="font-bold text-base sm:text-lg">Tu solicitud esta en proceso</p>
-                  <p className="text-primary-200 text-xs sm:text-sm mt-0.5 truncate">Un asesor te contactara pronto a {user?.email}</p>
+                  <p className="text-blue-200 text-xs sm:text-sm mt-0.5 truncate">Un asesor te contactara pronto a {user?.email}</p>
                 </div>
                 <ChevronRight size={24} className="text-white/70 flex-shrink-0" />
               </div>
@@ -303,7 +303,7 @@ export default function DashboardPage() {
           <div className="space-y-6">
             <div className="animate-fade-up">
               <h2 className="text-2xl font-black text-primary mb-1">Mi Cuenta</h2>
-              <p className="text-gray-500 text-sm">Tu tarjeta de credito Financial Boost</p>
+              <p className="text-gray-500 text-sm">Tu tarjeta de credito Impulso Latino</p>
             </div>
             <div className="flex justify-center animate-fade-up delay-100">
               <ProfileCard profile={profile} loan={activeLoan} holderName={displayName} />
@@ -394,7 +394,7 @@ export default function DashboardPage() {
                             <CheckCircle2 size={11}/> Desembolso exitoso
                           </span>
                         ) : (
-                          <span className="badge bg-secondary-100 text-secondary-700">{STAGE_LABELS[lead.stage] || lead.stage || 'nuevo'}</span>
+                          <span className="badge bg-blue-100 text-blue-700">{STAGE_LABELS[lead.stage] || lead.stage || 'nuevo'}</span>
                         )}
                       </div>
                     </div>

@@ -1,5 +1,5 @@
 import { getDefaultAdminRoute } from '../../config/adminRouting.js'
-const WA_MESSAGE = encodeURIComponent('Hola, me interesa información sobre préstamos en Financial Boost.')
+const WA_MESSAGE = encodeURIComponent('Hola, me interesa información sobre préstamos en Impulso Latino.')
 
 export default function WhatsAppButton({ adminRoute }) {
   const contact = adminRoute || getDefaultAdminRoute()

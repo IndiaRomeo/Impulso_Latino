@@ -57,7 +57,7 @@ export default function Requirements() {
                   </div>
                   <div>
                     <p className="font-bold">{item.title}</p>
-                    <p className="text-primary-200 text-sm mt-0.5">{item.desc}</p>
+                    <p className="text-blue-200 text-sm mt-0.5">{item.desc}</p>
                   </div>
                 </div>
               ))}

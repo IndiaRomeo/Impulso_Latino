@@ -16,7 +16,7 @@ export default function Hero() {
           <div>
             <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-7 animate-fade-up">
               <span className="w-2 h-2 bg-accent rounded-full animate-pulse"></span>
-              <span className="text-primary-100 text-sm font-medium">Prestamistas directos · Sin intermediarios</span>
+              <span className="text-blue-100 text-sm font-medium">Prestamistas directos · Sin intermediarios</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-6 animate-fade-up delay-100">
@@ -24,7 +24,7 @@ export default function Hero() {
               <span className="text-accent">Estados Unidos</span> 🇺🇸
             </h1>
 
-            <p className="text-xl text-primary-100 mb-9 leading-relaxed animate-fade-up delay-200">
+            <p className="text-xl text-blue-100 mb-9 leading-relaxed animate-fade-up delay-200">
               Somos un fondo de inversores colombianos que se ha enfocado en ayudar a la comunidad latina en Estados Unidos a acceder a créditos rápidos y seguros.
             </p>
 
@@ -41,7 +41,7 @@ export default function Hero() {
               {[['500+','Clientes atendidos'],['24h','Aprobación rápida'],['100%','En español']].map(([val, label]) => (
                 <div key={label} className="text-center">
                   <p className="text-3xl font-black text-accent">{val}</p>
-                  <p className="text-primary-200 text-xs mt-0.5">{label}</p>
+                  <p className="text-blue-200 text-xs mt-0.5">{label}</p>
                 </div>
               ))}
             </div>
