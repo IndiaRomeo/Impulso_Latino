@@ -46,8 +46,8 @@ export default function LoginPage() {
           <Link to="/" className="inline-block mb-6">
             <Logo className="h-14 w-auto mx-auto" />
           </Link>
-          <h1 className="text-3xl font-black text-white mb-2">Portal Impulso Latino</h1>
-          <p className="text-blue-200">Ingresa con tu correo y contrasena</p>
+          <h1 className="text-3xl font-black text-white mb-2">Portal Financial Boost</h1>
+          <p className="text-primary-200">Ingresa con tu correo y contrasena</p>
         </div>
 
         <div className="card shadow-2xl animate-scale-in delay-100">
@@ -124,7 +124,7 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center mt-6 animate-fade-up delay-300">
-          <Link to="/" className="flex items-center justify-center gap-2 text-blue-200 hover:text-white transition-colors text-sm">
+          <Link to="/" className="flex items-center justify-center gap-2 text-primary-200 hover:text-white transition-colors text-sm">
             <ArrowLeft size={14} /> Volver al inicio
           </Link>
         </div>

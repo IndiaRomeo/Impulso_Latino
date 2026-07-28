@@ -9,10 +9,10 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'logo.png'],
       manifest: {
-        name: 'Impulso Latino',
-        short_name: 'Impulso Latino',
+        name: 'Financial Boost - Impulso Financiero',
+        short_name: 'Financial Boost',
         description: 'Préstamos rápidos para latinos en Estados Unidos. Aprobación rápida y atención personalizada.',
-        theme_color: '#14347B',
+        theme_color: '#7f1d1d',
         background_color: '#ffffff',
         display: 'standalone',
         scope: '/',

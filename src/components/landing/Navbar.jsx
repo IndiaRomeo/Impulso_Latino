@@ -23,10 +23,10 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden md:flex items-center gap-6">
-          <a href="#como-funciona" className="text-blue-200 hover:text-white transition-colors text-sm font-medium">¿Cómo funciona?</a>
-          <a href="#requisitos" className="text-blue-200 hover:text-white transition-colors text-sm font-medium">Requisitos</a>
-          <a href="#quienes-somos" className="text-blue-200 hover:text-white transition-colors text-sm font-medium">Quiénes Somos</a>
-          <a href="#contacto" className="text-blue-200 hover:text-white transition-colors text-sm font-medium">Contacto</a>
+          <a href="#como-funciona" className="text-primary-200 hover:text-white transition-colors text-sm font-medium">¿Cómo funciona?</a>
+          <a href="#requisitos" className="text-primary-200 hover:text-white transition-colors text-sm font-medium">Requisitos</a>
+          <a href="#quienes-somos" className="text-primary-200 hover:text-white transition-colors text-sm font-medium">Quiénes Somos</a>
+          <a href="#contacto" className="text-primary-200 hover:text-white transition-colors text-sm font-medium">Contacto</a>
 
           {user ? (
             <div className="flex items-center gap-3">
@@ -37,13 +37,13 @@ export default function Navbar() {
                 <LayoutDashboard size={14} />
                 {isAdmin ? 'Admin' : 'Mi Cuenta'}
               </Link>
-              <button onClick={signOut} className="text-blue-300 hover:text-white transition-colors">
+              <button onClick={signOut} className="text-primary-300 hover:text-white transition-colors">
                 <LogOut size={18} />
               </button>
             </div>
           ) : (
             <div className="flex items-center gap-3">
-              <Link to="/login" className="flex items-center gap-1.5 text-blue-200 hover:text-white text-sm font-medium transition-colors">
+              <Link to="/login" className="flex items-center gap-1.5 text-primary-200 hover:text-white text-sm font-medium transition-colors">
                 <User size={14} /> Iniciar sesión
               </Link>
               <a href="#formulario" className="btn-cta text-sm py-2.5 px-5">Aplicar ahora</a>
@@ -57,19 +57,19 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-primary/95 backdrop-blur-md border-t border-blue-800 px-4 py-5 flex flex-col gap-4 animate-fade-up">
+        <div className="md:hidden bg-primary/95 backdrop-blur-md border-t border-primary-800 px-4 py-5 flex flex-col gap-4 animate-fade-up">
           {['#como-funciona:¿Cómo funciona?','#requisitos:Requisitos','#quienes-somos:Quiénes Somos','#contacto:Contacto'].map(item => {
             const [href, label] = item.split(':')
-            return <a key={href} href={href} onClick={() => setOpen(false)} className="text-blue-200 font-medium">{label}</a>
+            return <a key={href} href={href} onClick={() => setOpen(false)} className="text-primary-200 font-medium">{label}</a>
           })}
           {user ? (
             <>
-              <Link to={isAdmin ? '/admin' : '/dashboard'} onClick={() => setOpen(false)} className="text-blue-200 font-medium flex items-center gap-2"><LayoutDashboard size={14}/>{isAdmin ? 'Admin Panel' : 'Mi Cuenta'}</Link>
+              <Link to={isAdmin ? '/admin' : '/dashboard'} onClick={() => setOpen(false)} className="text-primary-200 font-medium flex items-center gap-2"><LayoutDashboard size={14}/>{isAdmin ? 'Admin Panel' : 'Mi Cuenta'}</Link>
               <button onClick={() => { signOut(); setOpen(false) }} className="text-left text-red-300 font-medium flex items-center gap-2"><LogOut size={14}/> Cerrar sesión</button>
             </>
           ) : (
             <>
-              <Link to="/login" onClick={() => setOpen(false)} className="text-blue-200 font-medium flex items-center gap-2"><User size={14}/> Iniciar sesión</Link>
+              <Link to="/login" onClick={() => setOpen(false)} className="text-primary-200 font-medium flex items-center gap-2"><User size={14}/> Iniciar sesión</Link>
               <a href="#formulario" onClick={() => setOpen(false)} className="btn-cta text-center">Aplicar ahora</a>
             </>
           )}

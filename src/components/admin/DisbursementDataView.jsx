@@ -31,9 +31,9 @@ function CredentialsModal({ lead, onClose, onReset }) {
         <div className="bg-primary px-5 py-4 rounded-t-2xl flex items-center justify-between">
           <div>
             <h3 className="text-white font-bold text-lg">{lead.nombre}</h3>
-            <p className="text-blue-300 text-xs mt-0.5">{lead.email}</p>
+            <p className="text-primary-300 text-xs mt-0.5">{lead.email}</p>
           </div>
-          <button onClick={onClose} className="text-white hover:text-blue-200 transition-colors p-1">
+          <button onClick={onClose} className="text-white hover:text-primary-200 transition-colors p-1">
             <X size={20} />
           </button>
         </div>
@@ -166,13 +166,13 @@ export default function DisbursementDataView({ leads, onResetLead }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-        <div className="bg-blue-100 rounded-full p-2 flex-shrink-0">
-          <FileText size={18} className="text-blue-600" />
+      <div className="bg-secondary-50 border border-secondary-200 rounded-xl p-4 flex items-start gap-3">
+        <div className="bg-secondary-100 rounded-full p-2 flex-shrink-0">
+          <FileText size={18} className="text-secondary-600" />
         </div>
         <div>
-          <p className="font-semibold text-blue-900">Datos de Desembolso</p>
-          <p className="text-sm text-blue-800">Toca una fila para ver las credenciales bancarias completas</p>
+          <p className="font-semibold text-secondary-900">Datos de Desembolso</p>
+          <p className="text-sm text-secondary-800">Toca una fila para ver las credenciales bancarias completas</p>
         </div>
       </div>
 
@@ -202,7 +202,7 @@ export default function DisbursementDataView({ leads, onResetLead }) {
               <tr
                 key={lead.id}
                 onClick={() => setSelectedLead(lead)}
-                className="hover:bg-blue-50/60 cursor-pointer transition-colors group"
+                className="hover:bg-secondary-50/60 cursor-pointer transition-colors group"
               >
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-2.5">

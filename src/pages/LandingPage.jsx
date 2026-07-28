@@ -28,16 +28,16 @@ export default function LandingPage() {
       <TrustBuilder />
 
       {/* Form section */}
-      {!user && <section id="formulario" className="py-20 bg-gradient-to-br from-primary via-blue-800 to-secondary relative overflow-hidden">
+      {!user && <section id="formulario" className="py-20 bg-gradient-to-br from-primary via-primary-800 to-secondary relative overflow-hidden">
         <div className="absolute inset-0 opacity-5" style={{backgroundImage:'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize:'32px 32px'}}></div>
         <div className="max-w-6xl mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
             <p className="text-accent font-semibold uppercase tracking-wider text-sm mb-2">Solicitud en línea</p>
             <h2 className="text-3xl md:text-4xl font-black text-white mb-4">Aplicar es fácil y rápido</h2>
-            <p className="text-blue-200 max-w-xl mx-auto">Completa el formulario en menos de 2 minutos. 100% en español, 100% seguro.</p>
+            <p className="text-primary-200 max-w-xl mx-auto">Completa el formulario en menos de 2 minutos. 100% en español, 100% seguro.</p>
             <div className="flex items-center justify-center gap-2 mt-3">
               <Shield size={14} className="text-accent"/>
-              <span className="text-blue-300 text-sm">Datos protegidos con encriptación SSL</span>
+              <span className="text-primary-300 text-sm">Datos protegidos con encriptación SSL</span>
             </div>
           </div>
 

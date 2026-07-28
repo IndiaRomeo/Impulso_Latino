@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
             <Logo className="h-14 w-auto mx-auto" />
           </Link>
           <h1 className="text-3xl font-black text-white mb-2">Recuperar contraseña</h1>
-          <p className="text-blue-200">Te enviaremos un enlace a tu correo</p>
+          <p className="text-primary-200">Te enviaremos un enlace a tu correo</p>
         </div>
 
         <div className="card shadow-2xl animate-scale-in delay-100">
@@ -106,7 +106,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         <div className="text-center mt-6 animate-fade-up delay-300">
-          <Link to="/login" className="flex items-center justify-center gap-2 text-blue-200 hover:text-white transition-colors text-sm">
+          <Link to="/login" className="flex items-center justify-center gap-2 text-primary-200 hover:text-white transition-colors text-sm">
             <ArrowLeft size={14} /> Volver al inicio de sesión
           </Link>
         </div>

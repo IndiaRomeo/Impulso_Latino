@@ -18,7 +18,7 @@ export default function QuienesSomos() {
           <p className="text-secondary font-semibold uppercase tracking-wider text-sm mb-2">Nuestra historia</p>
           <h2 className="section-title mb-4">¿Quiénes Somos?</h2>
           <p className="text-gray-500 max-w-2xl mx-auto leading-relaxed">
-            Impulso Latino nació de la necesidad real de nuestra comunidad. Somos un equipo de profesionales
+            Financial Boost nació de la necesidad real de nuestra comunidad. Somos un equipo de profesionales
             hispanos que entendemos los obstáculos que enfrentan los latinos al buscar financiamiento en USA.
             Por eso creamos una solución directa, honesta y en tu idioma.
           </p>
@@ -32,7 +32,7 @@ export default function QuienesSomos() {
               <div className="relative z-10">
                 <div className="text-6xl font-black text-accent mb-2">5+</div>
                 <p className="text-xl font-bold mb-2">Años de experiencia</p>
-                <p className="text-blue-200 leading-relaxed">
+                <p className="text-primary-200 leading-relaxed">
                   Ayudando a familias latinas a alcanzar sus metas financieras en Estados Unidos con productos
                   diseñados para su realidad.
                 </p>
@@ -40,7 +40,7 @@ export default function QuienesSomos() {
                   {[['500+','Clientes'],['$2M+','Prestado'],['98%','Satisfacción'],['24h','Respuesta']].map(([v,l]) => (
                     <div key={l} className="bg-white/10 rounded-xl p-3 text-center">
                       <p className="text-2xl font-black text-accent">{v}</p>
-                      <p className="text-blue-200 text-xs">{l}</p>
+                      <p className="text-primary-200 text-xs">{l}</p>
                     </div>
                   ))}
                 </div>

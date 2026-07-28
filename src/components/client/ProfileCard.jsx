@@ -15,11 +15,11 @@ export default function ProfileCard({ profile, loan, holderName }) {
         {/* Top row */}
         <div className="flex items-start justify-between relative z-10">
           <div>
-            <p className="text-blue-200 text-xs font-medium uppercase tracking-widest">Impulso Latino</p>
+            <p className="text-primary-200 text-xs font-medium uppercase tracking-widest">Financial Boost</p>
             <p className="text-white font-bold text-sm mt-0.5">Cuenta de Crédito</p>
           </div>
           <div className="flex flex-col items-end gap-1">
-            <Wifi size={20} className="text-blue-300 rotate-90" />
+            <Wifi size={20} className="text-primary-300 rotate-90" />
             {hasLoan && (
               <span className="badge bg-green-500/20 text-green-300 border border-green-500/30 text-xs">ACTIVO</span>
             )}
@@ -32,10 +32,10 @@ export default function ProfileCard({ profile, loan, holderName }) {
         {/* Chip + number */}
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-7 rounded-md border border-yellow-400/60" style={{background:'linear-gradient(135deg,#EBA417,#f5c842)'}}>
+            <div className="w-10 h-7 rounded-md border border-yellow-400/60" style={{background:'linear-gradient(135deg,#d97706,#fbbf24)'}}>
               <div className="w-full h-1/2 border-b border-yellow-300/40 rounded-t-md"></div>
             </div>
-            <Wifi size={14} className="text-blue-300" />
+            <Wifi size={14} className="text-primary-300" />
           </div>
           <p className="font-mono text-lg tracking-[0.2em] font-bold text-white/95">
             {formatAccount(profile?.numero_cuenta)}
@@ -45,7 +45,7 @@ export default function ProfileCard({ profile, loan, holderName }) {
         {/* Bottom */}
         <div className="flex items-end justify-between relative z-10">
           <div>
-            <p className="text-blue-300 text-xs uppercase tracking-widest mb-1">Titular</p>
+            <p className="text-primary-300 text-xs uppercase tracking-widest mb-1">Titular</p>
             <p className="font-bold text-white uppercase tracking-wide text-sm">
               {displayName}
             </p>
@@ -53,12 +53,12 @@ export default function ProfileCard({ profile, loan, holderName }) {
           <div className="text-right">
             {hasLoan ? (
               <>
-                <p className="text-blue-300 text-xs uppercase tracking-widest mb-1">Saldo pendiente</p>
+                <p className="text-primary-300 text-xs uppercase tracking-widest mb-1">Saldo pendiente</p>
                 <p className="text-accent font-black text-xl">${loan.saldo_pendiente?.toLocaleString()}</p>
               </>
             ) : (
               <>
-                <p className="text-blue-300 text-xs uppercase tracking-widest mb-1">Estado</p>
+                <p className="text-primary-300 text-xs uppercase tracking-widest mb-1">Estado</p>
                 <p className="text-yellow-300 font-bold text-sm">En revisión</p>
               </>
             )}
