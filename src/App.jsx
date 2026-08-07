@@ -9,7 +9,7 @@ import DashboardPage from './pages/DashboardPage.jsx'
 import AdminPage from './pages/AdminPage.jsx'
 
 // Cambia este valor cuando quieras suspender o reactivar
-const SITE_ENABLED = false;
+const SITE_ENABLED = true;
 
 export default function App() {
 
